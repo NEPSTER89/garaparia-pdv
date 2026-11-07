@@ -3,32 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDV - Garaparia</title>
+    <title>PDV - Emunáh Garaparia</title>
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        body { background: #f4f6f9; padding: 15px; }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 15px; font-size: 22px; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background: #1b3022; padding: 15px; color: #333; }
         
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container { max-width: 500px; margin: 0 auto; background: #fdfbf7; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #d4af37; }
         
-        .tabs { display: flex; margin-bottom: 15px; border-bottom: 2px solid #ddd; }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; color: #7f8c8d; background: #ecf0f1; }
-        .tab.active { background: #27ae60; color: white; border-bottom: 2px solid #27ae60; }
+        h1 { text-align: center; color: #2c4c32; margin-bottom: 5px; font-size: 24px; font-weight: bold; }
+        .subtitle { text-align: center; color: #d4af37; font-size: 13px; margin-bottom: 15px; font-style: italic; }
+        
+        .tabs { display: flex; margin-bottom: 20px; border-radius: 6px; overflow: hidden; border: 1px solid #d4af37; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; color: #2c4c32; background: #f4edd3; transition: 0.3s; }
+        .tab.active { background: #2c4c32; color: #d4af37; }
 
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #2c4c32; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #d4af37; border-radius: 6px; font-size: 16px; background: #fff; }
 
-        .btn { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn:active { background: #219653; }
+        .btn { width: 100%; padding: 14px; background: #2c4c32; color: #d4af37; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; border: 1px solid #d4af37; transition: 0.2s; }
+        .btn:active { background: #1b3022; }
+        .btn-gasto { background: #8b3a3a; color: white; }
         
-        .loading { display: none; text-align: center; font-weight: bold; color: #e67e22; margin-top: 10px; }
+        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 15px; background: #2c4c32; padding: 10px; border-radius: 6px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🥤 Garaparia PDV</h1>
+        <h1>🥤 EMUNÁH GARAPARIA</h1>
+        <div class="subtitle">"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos."</div>
 
         <!-- Abas de Navegação -->
         <div class="tabs">
@@ -39,13 +43,20 @@
         <!-- Formulário de Vendas -->
         <div id="secao-venda">
             <div class="form-group">
-                <label>Produto:</label>
+                <label>Produto / Bebida:</label>
                 <select id="produto">
-                    <option value="Garapa 300ml" data-preco="5.00" data-custo="1.50">Garapa 300ml - R$ 5,00</option>
-                    <option value="Garapa 500ml" data-preco="7.00" data-custo="2.20">Garapa 500ml - R$ 7,00</option>
-                    <option value="Garapa 1 Litro" data-preco="12.00" data-custo="4.00">Garapa 1 Litro - R$ 12,00</option>
-                    <option value="Pastel de Carne" data-preco="8.00" data-custo="3.20">Pastel de Carne - R$ 8,00</option>
-                    <option value="Pastel de Queijo" data-preco="8.00" data-custo="3.00">Pastel de Queijo - R$ 8,00</option>
+                    <option value="Garapa Natural 500ml" data-preco="7.00" data-custo="2.20">Garapa Natural 500ml - R$ 7,00</option>
+                    <option value="Garapa Natural 1L" data-preco="12.00" data-custo="4.00">Garapa Natural 1 Litro - R$ 12,00</option>
+                    <option value="Garapa com Limão" data-preco="8.00" data-custo="2.50">Garapa com Limão - R$ 8,00</option>
+                    <option value="Garapa com Abacaxi" data-preco="9.00" data-custo="3.00">Garapa com Abacaxi - R$ 9,00</option>
+                    <option value="Garapa com Morango" data-preco="10.00" data-custo="3.50">Garapa com Morango - R$ 10,00</option>
+                    <option value="Garapa com Maracujá" data-preco="10.00" data-custo="3.50">Garapa com Maracujá - R$ 10,00</option>
+                    <option value="Adicional Hortelã/Gengibre" data-preco="2.00" data-custo="0.50">Adicional (Hortelã/Gengibre) - R$ 2,00</option>
+                    <option value="Pastel" data-preco="8.00" data-custo="3.20">Pastel - R$ 8,00</option>
+                    <option value="Pamonha" data-preco="10.00" data-custo="4.50">Pamonha - R$ 10,00</option>
+                    <option value="Água de Coco" data-preco="6.00" data-custo="2.50">Água de Côco - R$ 6,00</option>
+                    <option value="Água Mineral" data-preco="4.00" data-custo="1.80">Água Mineral - R$ 4,00</option>
+                    <option value="Refrigerante" data-preco="6.00" data-custo="3.00">Refrigerante - R$ 6,00</option>
                 </select>
             </div>
 
@@ -71,7 +82,7 @@
             <div class="form-group">
                 <label>Categoria do Gasto:</label>
                 <select id="categoriaGasto">
-                    <option value="Insumos">Insumos (Cana, Limão, Copos)</option>
+                    <option value="Insumos">Insumos (Cana, Limão, Frutas, Copos)</option>
                     <option value="Gelo">Gelo</option>
                     <option value="Manutenção">Manutenção / Equipamentos</option>
                     <option value="Despesas Fixas">Aluguel / Água / Luz</option>
@@ -103,14 +114,13 @@
                 <input type="file" id="fotoComprovante" accept="image/*" capture="camera">
             </div>
 
-            <button class="btn" style="background: #e74c3c;" onclick="enviarGasto()">REGISTRAR GASTO</button>
+            <button class="btn btn-gasto" onclick="enviarGasto()">REGISTRAR GASTO</button>
         </div>
 
         <div id="loading" class="loading">Salvando na planilha... Aguarde.</div>
     </div>
 
     <script>
-        // URL DO SEU GOOGLE APPS SCRIPT JÁ CONFIGURADA
         const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
 
         function mudarAba(aba) {
@@ -135,7 +145,6 @@
             document.getElementById('loading').style.display = ativo ? 'block' : 'none';
         }
 
-        // Enviar Venda
         async function enviarVenda() {
             const selectProd = document.getElementById('produto');
             const option = selectProd.options[selectProd.selectedIndex];
@@ -171,7 +180,6 @@
             }
         }
 
-        // Enviar Gasto (Com conversão e compactação da foto em Base64)
         async function enviarGasto() {
             const fileInput = document.getElementById('fotoComprovante');
             let base64File = "";
@@ -217,7 +225,6 @@
             }
         }
 
-        // Função para compactar imagem antes de enviar (economiza espaço no Google Drive)
         function comprimirEConverterBase64(arquivo) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
