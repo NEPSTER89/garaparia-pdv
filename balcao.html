@@ -3,78 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDV - Emunáh Garaparia</title>
+    <title>Caixa & Balcão - Emunáh Garaparia</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-        body { background: #1b3022; padding: 10px; color: #333; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: #1b3022; padding: 15px; color: #333; }
         
-        .container { max-width: 480px; margin: 0 auto; background: #fdfbf7; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 2px solid #d4af37; }
+        .container { max-width: 500px; margin: 0 auto; background: #fdfbf7; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 2px solid #d4af37; }
         
-        h1 { text-align: center; color: #2c4c32; font-size: 20px; font-weight: bold; }
-        .subtitle { text-align: center; color: #d4af37; font-size: 11px; margin-bottom: 12px; font-style: italic; }
+        h1 { text-align: center; color: #2c4c32; font-size: 22px; font-weight: bold; }
+        .subtitle { text-align: center; color: #d4af37; font-size: 12px; margin-bottom: 15px; font-style: italic; }
         
-        .tabs { display: flex; margin-bottom: 15px; border-radius: 6px; overflow: hidden; border: 1px solid #d4af37; }
-        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #2c4c32; background: #f4edd3; font-size: 14px; }
+        .tabs { display: flex; margin-bottom: 20px; border-radius: 6px; overflow: hidden; border: 1px solid #d4af37; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; color: #2c4c32; background: #f4edd3; font-size: 14px; }
         .tab.active { background: #2c4c32; color: #d4af37; }
 
-        /* Grade de Produtos Rápidos */
-        .grid-produtos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
-        .prod-card { background: #fff; border: 1px solid #d4af37; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-card:active { background: #f4edd3; transform: scale(0.97); }
-        .prod-card.selected { background: #2c4c32; color: white; border-color: #1b3022; }
-        .prod-card.selected .prod-preco { color: #d4af37; }
-        .prod-nome { font-weight: bold; font-size: 13px; margin-bottom: 4px; color: #2c4c32; }
-        .prod-card.selected .prod-nome { color: #fff; }
-        .prod-preco { font-size: 13px; color: #b8860b; font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; color: #2c4c32; font-size: 13px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #d4af37; border-radius: 6px; font-size: 15px; background: #fff; }
 
-        /* Controles de Quantidade */
-        .painel-selecao { background: #f4edd3; padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #d4af37; display: flex; align-items: center; justify-content: space-between; }
-        .info-selecionado { font-size: 13px; font-weight: bold; color: #2c4c32; }
-        .controle-qtd { display: flex; align-items: center; gap: 8px; }
-        .btn-qtd { width: 32px; height: 32px; background: #2c4c32; color: #d4af37; border: none; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .qtd-valor { font-size: 16px; font-weight: bold; min-width: 20px; text-align: center; }
-
-        .form-group { margin-bottom: 10px; }
-        label { display: block; font-weight: bold; margin-bottom: 4px; color: #2c4c32; font-size: 13px; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #d4af37; border-radius: 6px; font-size: 14px; background: #fff; }
-
-        .btn { width: 100%; padding: 12px; background: #2c4c32; color: #d4af37; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px; border: 1px solid #d4af37; }
+        .btn { width: 100%; padding: 14px; background: #2c4c32; color: #d4af37; border: none; border-radius: 6px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; border: 1px solid #d4af37; }
         .btn:active { background: #1b3022; }
         .btn-gasto { background: #8b3a3a; color: white; }
         
-        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 10px; background: #2c4c32; padding: 8px; border-radius: 6px; font-size: 13px; }
+        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 15px; background: #2c4c32; padding: 10px; border-radius: 6px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🥤 EMUNÁH GARAPARIA</h1>
-        <div class="subtitle">"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos."</div>
+        <h1>🥤 PAINEL DO BALCÃO</h1>
+        <div class="subtitle">Controle Interno - Emunáh Garaparia</div>
 
-        <!-- Abas de Navegação -->
+        <!-- Abas de Navegação Interna -->
         <div class="tabs">
-            <div class="tab active" onclick="mudarAba('venda')">Nova Venda</div>
+            <div class="tab active" onclick="mudarAba('venda')">Venda Balcão</div>
             <div class="tab" onclick="mudarAba('gasto')">Lançar Gasto</div>
         </div>
 
-        <!-- Formulário de Vendas -->
+        <!-- Formulário de Venda Direta no Balcão -->
         <div id="secao-venda">
-            <label>Selecione o Item (Toque rápido):</label>
-            <div class="grid-produtos" id="gradeProdutos">
-                <!-- Preenchido via JavaScript -->
+            <div class="form-group">
+                <label>Produto / Bebida:</label>
+                <select id="produto">
+                    <option value="Garapa Natural 500ml" data-preco="7.00" data-custo="2.20">Garapa Natural 500ml - R$ 7,00</option>
+                    <option value="Garapa Natural 1L" data-preco="12.00" data-custo="4.00">Garapa Natural 1 Litro - R$ 12,00</option>
+                    <option value="Garapa com Limão" data-preco="8.00" data-custo="2.50">Garapa com Limão - R$ 8,00</option>
+                    <option value="Garapa com Abacaxi" data-preco="9.00" data-custo="3.00">Garapa com Abacaxi - R$ 9,00</option>
+                    <option value="Garapa com Morango" data-preco="10.00" data-custo="3.50">Garapa com Morango - R$ 10,00</option>
+                    <option value="Garapa com Maracujá" data-preco="10.00" data-custo="3.50">Garapa com Maracujá - R$ 10,00</option>
+                    <option value="Pastel" data-preco="8.00" data-custo="3.20">Pastel - R$ 8,00</option>
+                    <option value="Pamonha" data-preco="10.00" data-custo="4.50">Pamonha - R$ 10,00</option>
+                    <option value="Água de Côco" data-preco="6.00" data-custo="2.50">Água de Côco - R$ 6,00</option>
+                    <option value="Água Mineral" data-preco="4.00" data-custo="1.80">Água Mineral - R$ 4,00</option>
+                    <option value="Refrigerante" data-preco="6.00" data-custo="3.00">Refrigerante - R$ 6,00</option>
+                </select>
             </div>
 
-            <!-- Item Selecionado e Quantidade -->
-            <div class="painel-selecao">
-                <div>
-                    <div style="font-size: 11px; color: #666;">Selecionado:</div>
-                    <div class="info-selecionado" id="labelProdutoSelecionado">Nenhum</div>
-                </div>
-                <div class="controle-qtd">
-                    <button class="btn-qtd" onclick="alterarQtd(-1)">-</button>
-                    <span class="qtd-valor" id="qtdVisual">1</span>
-                    <button class="btn-qtd" onclick="alterarQtd(1)">+</button>
-                </div>
+            <div class="form-group">
+                <label>Quantidade:</label>
+                <input type="number" id="qtd" value="1" min="1">
             </div>
 
             <div class="form-group">
@@ -89,7 +76,7 @@
             <button class="btn" onclick="enviarVenda()">REGISTRAR VENDA</button>
         </div>
 
-        <!-- Formulário de Gastos -->
+        <!-- Formulário de Lançamento de Gastos -->
         <div id="secao-gasto" style="display: none;">
             <div class="form-group">
                 <label>Categoria do Gasto:</label>
@@ -135,58 +122,6 @@
     <script>
         const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
 
-        // Lista oficial do cardápio da Emunáh
-        const produtosCatalogo = [
-            { nome: "Garapa Natural 500ml", preco: 7.00, custo: 2.20 },
-            { nome: "Garapa Natural 1L", preco: 12.00, custo: 4.00 },
-            { nome: "Garapa com Limão", preco: 8.00, custo: 2.50 },
-            { nome: "Garapa com Abacaxi", preco: 9.00, custo: 3.00 },
-            { nome: "Garapa com Morango", preco: 10.00, custo: 3.50 },
-            { nome: "Garapa com Maracujá", preco: 10.00, custo: 3.50 },
-            { nome: "Adicional Hortelã/Gengibre", preco: 2.00, custo: 0.50 },
-            { nome: "Pastel", preco: 8.00, custo: 3.20 },
-            { nome: "Pamonha", preco: 10.00, custo: 4.50 },
-            { nome: "Água de Coco", preco: 6.00, custo: 2.50 },
-            { nome: "Água Mineral", preco: 4.00, custo: 1.80 },
-            { nome: "Refrigerante", preco: 6.00, custo: 3.00 }
-        ];
-
-        let produtoSelecionado = null;
-        let quantidadeAtual = 1;
-
-        // Inicializa a grade de produtos na tela
-        function carregarGradeProdutos() {
-            const grade = document.getElementById('gradeProdutos');
-            grade.innerHTML = "";
-
-            produtosCatalogo.forEach((prod, index) => {
-                const card = document.createElement('div');
-                card.className = `prod-card ${produtoSelecionado === index ? 'selected' : ''}`;
-                card.onclick = () => selecionarProduto(index);
-                card.innerHTML = `
-                    <div class="prod-nome">${prod.nome}</div>
-                    <div class="prod-preco">R$ ${prod.preco.toFixed(2).replace('.', ',')}</div>
-                `;
-                grade.appendChild(card);
-            });
-        }
-
-        function selecionarProduto(index) {
-            produtoSelecionado = index;
-            quantidadeAtual = 1;
-            document.getElementById('qtdVisual').innerText = quantidadeAtual;
-            
-            const prod = produtosCatalogo[index];
-            document.getElementById('labelProdutoSelecionado').innerText = `${prod.nome} (R$ ${prod.preco.toFixed(2).replace('.', ',')})`;
-            carregarGradeProdutos();
-        }
-
-        function alterarQtd(delta) {
-            quantidadeAtual += delta;
-            if (quantidadeAtual < 1) quantidadeAtual = 1;
-            document.getElementById('qtdVisual').innerText = quantidadeAtual;
-        }
-
         function mudarAba(aba) {
             const secVenda = document.getElementById('secao-venda');
             const secGasto = document.getElementById('secao-gasto');
@@ -210,19 +145,15 @@
         }
 
         async function enviarVenda() {
-            if (produtoSelecionado === null) {
-                alert("Por favor, selecione um produto na grade antes de registrar a venda!");
-                return;
-            }
-
-            const prod = produtosCatalogo[produtoSelecionado];
+            const selectProd = document.getElementById('produto');
+            const option = selectProd.options[selectProd.selectedIndex];
             
             const dados = {
                 acao: "venda",
-                produto: prod.nome,
-                qtd: quantidadeAtual,
-                valorUnitario: prod.preco,
-                custoUnitario: prod.custo,
+                produto: option.value,
+                qtd: document.getElementById('qtd').value,
+                valorUnitario: option.getAttribute('data-preco'),
+                custoUnitario: option.getAttribute('data-custo'),
                 formaPagamento: document.getElementById('pagamentoVenda').value
             };
 
@@ -237,12 +168,7 @@
                 
                 if (resultado.status === "sucesso") {
                     alert("Venda registrada com sucesso!");
-                    // Reseta seleção
-                    produtoSelecionado = null;
-                    quantidadeAtual = 1;
-                    document.getElementById('qtdVisual').innerText = "1";
-                    document.getElementById('labelProdutoSelecionado').innerText = "Nenhum";
-                    carregarGradeProdutos();
+                    document.getElementById('qtd').value = "1";
                 } else {
                     alert("Erro ao registrar: " + resultado.mensagem);
                 }
@@ -326,11 +252,6 @@
                 };
             });
         }
-
-        // Executa ao carregar a página
-        window.onload = () => {
-            carregarGradeProdutos();
-        };
     </script>
 </body>
 </html>
