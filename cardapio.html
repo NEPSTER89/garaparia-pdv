@@ -5,72 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cardápio Digital - Emunáh Garaparia</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: #1b3022; padding-bottom: 95px; color: #333; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background: #15251a; padding-bottom: 110px; color: #fdfbf7; }
         
-        .header { background: #1b3022; color: #d4af37; text-align: center; padding: 25px 15px; border-bottom: 2px solid #d4af37; }
-        .header h1 { font-size: 24px; font-weight: 800; }
-        .header p { font-size: 12px; font-style: italic; margin-top: 6px; color: #f4edd3; }
+        /* Cabeçalho Estilo Mini Site / Bio */
+        .header { background: linear-gradient(135deg, #1b3022 0%, #101e14 100%); color: #d4af37; text-align: center; padding: 35px 20px 25px 20px; border-bottom: 2px solid #d4af37; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .header h1 { font-size: 26px; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+        .header p { font-size: 13px; font-style: italic; color: #e8e2cd; max-width: 400px; margin: 0 auto; line-height: 1.4; }
 
-        .categorias { display: flex; overflow-x: auto; background: #2c4c32; padding: 12px; gap: 8px; border-bottom: 1px solid #d4af37; scrollbar-width: none; }
-        .cat-btn { background: #f4edd3; color: #2c4c32; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat-btn.active { background: #d4af37; color: #1b3022; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        /* Categorias em Estilo de Pílulas / Botões Modernos */
+        .categorias-wrapper { background: #1b3022; padding: 12px 10px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(212,175,55,0.3); backdrop-filter: blur(10px); }
+        .categorias { display: flex; overflow-x: auto; gap: 10px; max-width: 500px; margin: 0 auto; scrollbar-width: none; }
+        .cat-btn { background: #26422f; color: #fdfbf7; border: 1px solid #d4af37; padding: 9px 20px; border-radius: 25px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.3s ease; }
+        .cat-btn.active { background: #d4af37; color: #15251a; box-shadow: 0 0 12px rgba(212,175,55,0.5); transform: translateY(-1px); }
 
-        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
-        .card-produto { background: #fdfbf7; border: 1.5px solid #d4af37; border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .prod-info h3 { font-size: 15px; color: #1b3022; font-weight: 700; }
-        .prod-info p { font-size: 14px; color: #b8860b; font-weight: 800; margin-top: 4px; }
-        .btn-add { background: #1b3022; color: #d4af37; border: 1px solid #d4af37; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-
-        .bar-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: #1b3022; border-top: 2px solid #d4af37; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; max-width: 500px; margin: 0 auto; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); }
-        .total-carrinho { font-size: 17px; font-weight: 800; color: #d4af37; }
-        .btn-finalizar { background: #d4af37; color: #1b3022; border: none; padding: 12px 22px; border-radius: 8px; font-weight: 800; font-size: 15px; cursor: pointer; }
+        /* Lista de Produtos */
+        .container { padding: 20px 15px; max-width: 500px; margin: 0 auto; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #fdfbf7; border: 2px solid #d4af37; padding: 25px; border-radius: 16px; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-content h2 { color: #1b3022; margin-bottom: 15px; font-size: 18px; }
-        .modal-content input, .modal-content select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5px solid #d4af37; border-radius: 8px; font-size: 15px; }
+        .secao-titulo { font-size: 16px; color: #d4af37; margin: 20px 0 12px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #d4af37; padding-left: 8px; }
+
+        .card-produto { background: #1f3827; border: 1.5px solid rgba(212,175,55,0.4); border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .card-produto:hover { border-color: #d4af37; transform: translateY(-2px); }
+        
+        .prod-info h3 { font-size: 16px; color: #fdfbf7; font-weight: 700; margin-bottom: 4px; }
+        .prod-info p { font-size: 15px; color: #d4af37; font-weight: 800; }
+        
+        .acoes-qtd { display: flex; align-items: center; gap: 8px; background: #15251a; padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3); }
+        .btn-add { background: #d4af37; color: #15251a; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: 800; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-add:active { transform: scale(0.9); }
+        .btn-menos { background: #8b3a3a; color: #fff; }
+        .qtd-texto { font-weight: 800; font-size: 16px; color: #fdfbf7; min-width: 20px; text-align: center; }
+
+        .btn-adicionar-simples { background: #d4af37; color: #15251a; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; }
+
+        /* Barra Fixa do Carrinho (Rodapé) */
+        .bar-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(27, 48, 34, 0.95); backdrop-filter: blur(12px); border-top: 2px solid #d4af37; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto; box-shadow: 0 -6px 25px rgba(0,0,0,0.6); z-index: 100; }
+        .total-carrinho { font-size: 18px; font-weight: 800; color: #d4af37; }
+        .btn-finalizar { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #15251a; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
+        
+        /* Modal de Confirmação */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
+        .modal-content { background: #1f3827; border: 2px solid #d4af37; padding: 25px; border-radius: 18px; max-width: 400px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.7); color: #fdfbf7; }
+        .modal-content h2 { color: #d4af37; margin-bottom: 15px; font-size: 20px; text-align: center; }
+        .modal-content label { display: block; font-size: 13px; font-weight: 700; color: #e8e2cd; margin-bottom: 6px; text-transform: uppercase; }
+        .modal-content input, .modal-content select { width: 100%; padding: 13px; margin-bottom: 18px; border: 1.5px solid #d4af37; border-radius: 10px; font-size: 15px; background: #15251a; color: #fdfbf7; outline: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>🥤 EMUNÁH GARAPARIA</h1>
-        <p>"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos."</p>
+        <p>"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos." (Salmos 90:17)</p>
     </div>
 
-    <div class="categorias">
-        <button class="cat-btn active" onclick="filtrarCategoria('todas')">Todas</button>
-        <button class="cat-btn" onclick="filtrarCategoria('garapas')">Garapas</button>
-        <button class="cat-btn" onclick="filtrarCategoria('lanches')">Salgados & Doces</button>
-        <button class="cat-btn" onclick="filtrarCategoria('bebidas')">Outras Bebidas</button>
+    <div class="categorias-wrapper">
+        <div class="categorias">
+            <button class="cat-btn active" onclick="filtrarCategoria('todas')">🌟 Todos</button>
+            <button class="cat-btn" onclick="filtrarCategoria('garapas')">🥤 Garapas</button>
+            <button class="cat-btn" onclick="filtrarCategoria('lanches')">🥟 Salgados & Doces</button>
+            <button class="cat-btn" onclick="filtrarCategoria('bebidas')">🧊 Bebidas</button>
+        </div>
     </div>
 
     <div class="container" id="listaProdutos"></div>
 
-    <div class="bar-carrinho">
+    <div class="bar-carrinho" id="barraCarrinho" style="display: none;">
         <div>
-            <div style="font-size: 11px; color: #f4edd3;">Total do Pedido:</div>
+            <div style="font-size: 11px; color: #e8e2cd; font-weight: 600;">Total do Pedido:</div>
             <div class="total-carrinho" id="totalVisual">R$ 0,00</div>
         </div>
-        <button class="btn-finalizar" onclick="abrirModal()">ENVIAR PEDIDO</button>
+        <button class="btn-finalizar" onclick="abrirModal()">ENVIAR PEDIDO 🚀</button>
     </div>
 
     <div class="modal" id="modalPedido">
         <div class="modal-content">
             <h2>Finalizar Pedido</h2>
-            <label style="font-size: 12px; font-weight: 700; color: #1b3022;">Seu Nome ou Número da Mesa:</label>
+            <label>Seu Nome ou Número da Mesa:</label>
             <input type="text" id="nomeCliente" placeholder="Ex: João / Mesa 04">
             
-            <label style="font-size: 12px; font-weight: 700; color: #1b3022;">Forma de Pagamento:</label>
+            <label>Forma de Pagamento:</label>
             <select id="pagamentoCliente">
                 <option value="PIX">PIX</option>
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Cartão">Cartão</option>
             </select>
 
-            <button class="btn-finalizar" style="width: 100%;" onclick="confirmarEnviarPedido()">CONFIRMAR E ENVIAR</button>
-            <button onclick="fecharModal()" style="width: 100%; margin-top: 10px; background: transparent; border: none; color: #666; cursor: pointer; font-weight: 600;">Cancelar</button>
+            <button class="btn-finalizar" style="width: 100%; text-align: center;" onclick="confirmarEnviarPedido()">CONFIRMAR E ENVIAR</button>
+            <button onclick="fecharModal()" style="width: 100%; margin-top: 12px; background: transparent; border: none; color: #aaa; cursor: pointer; font-weight: 600; font-size: 14px;">Voltar ao Cardápio</button>
         </div>
     </div>
 
@@ -111,11 +132,13 @@
                     </div>
                     <div>
                         ${qtd > 0 ? `
-                            <button onclick="alterarQtd(${p.id}, -1)" class="btn-add" style="background:#8b3a3a; border:none; color:white;">-</button>
-                            <span style="font-weight:800; margin: 0 8px; color:#1b3022;">${qtd}</span>
-                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+</button>
+                            <div class="acoes-qtd">
+                                <button onclick="alterarQtd(${p.id}, -1)" class="btn-add btn-menos">-</button>
+                                <span class="qtd-texto">${qtd}</span>
+                                <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+</button>
+                            </div>
                         ` : `
-                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+ Adicionar</button>
+                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-adicionar-simples">+ Adicionar</button>
                         `}
                     </div>
                 `;
@@ -125,10 +148,10 @@
         }
 
         function alterarQtd(id, delta) {
-            const prod = produtos.find(p => p.id === id);
             let item = carrinho.find(c => c.id === id);
 
             if (!item && delta > 0) {
+                const prod = produtos.find(p => p.id === id);
                 carrinho.push({ ...prod, qtd: 1 });
             } else if (item) {
                 item.qtd += delta;
@@ -136,19 +159,23 @@
                     carrinho = carrinho.filter(c => c.id !== id);
                 }
             }
-            renderizarProdutos(document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('garapa') ? 'garapas' : (document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('salgados') ? 'lanches' : (document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('bebidas') ? 'bebidas' : 'todas')));
+            const catAtiva = document.querySelector('.cat-btn.active').getAttribute('onclick').match(/'([^']+)'/)[1];
+            renderizarProdutos(catAtiva);
         }
 
         function atualizarTotal() {
             const total = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
             document.getElementById('totalVisual').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            
+            const barra = document.getElementById('barraCarrinho');
+            if (carrinho.length > 0) {
+                barra.style.display = 'flex';
+            } else {
+                barra.style.display = 'none';
+            }
         }
 
         function abrirModal() {
-            if (carrinho.length === 0) {
-                alert("Selecione ao menos um item no cardápio antes de enviar!");
-                return;
-            }
             document.getElementById('modalPedido').style.display = 'flex';
         }
 
@@ -175,7 +202,7 @@
                 alert("Pedido enviado para o balcão com sucesso! 🥤");
                 carrinho = [];
                 fecharModal();
-                renderizarProdutos();
+                renderizarProdutos('todas');
             } catch (e) {
                 alert("Erro de conexão ao enviar pedido.");
             }
@@ -187,7 +214,7 @@
             renderizarProdutos(cat);
         }
 
-        window.onload = () => renderizarProdutos();
+        window.onload = () => renderizarProdutos('todas');
     </script>
 </body>
 </html>
