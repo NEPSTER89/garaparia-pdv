@@ -3,208 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio - Emunáh Garaparia</title>
+    <title>PDV & Balcão - Emunáh Garaparia</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: #1b3022; padding-bottom: 90px; color: #333; }
+        body { background: #1b3022; padding: 15px; color: #333; }
         
-        .header { background: #1b3022; color: #d4af37; text-align: center; padding: 20px 15px; border-bottom: 2px solid #d4af37; }
-        .header h1 { font-size: 22px; font-weight: bold; }
-        .header p { font-size: 12px; font-style: italic; margin-top: 4px; color: #f4edd3; }
-
-        /* Categorias em Abas Roláveis */
-        .categorias { display: flex; overflow-x: auto; background: #2c4c32; padding: 10px; gap: 8px; border-bottom: 1px solid #d4af37; }
-        .cat-btn { background: #f4edd3; color: #2c4c32; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; white-space: nowrap; cursor: pointer; }
-        .cat-btn.active { background: #d4af37; color: #1b3022; }
-
-        /* Lista de Produtos */
-        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
-        .card-produto { background: #fdfbf7; border: 1px solid #d4af37; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .prod-info h3 { font-size: 15px; color: #2c4c32; }
-        .prod-info p { font-size: 13px; color: #b8860b; font-weight: bold; margin-top: 4px; }
-        .btn-add { background: #2c4c32; color: #d4af37; border: 1px solid #d4af37; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* Barra Fixa do Carrinho (Rodapé) */
-        .bar-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: #2c4c32; border-top: 2px solid #d4af37; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; max-width: 500px; margin: 0 auto; }
-        .total-carrinho { font-size: 16px; font-weight: bold; color: #d4af37; }
-        .btn-finalizar { background: #d4af37; color: #1b3022; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .container { max-width: 500px; margin: 0 auto; background: #fdfbf7; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #d4af37; }
         
-        /* Modal de Confirmação */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #fdfbf7; border: 2px solid #d4af37; padding: 20px; border-radius: 12px; max-width: 400px; width: 100%; }
-        .modal-content h2 { color: #2c4c32; margin-bottom: 12px; font-size: 18px; }
-        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #d4af37; border-radius: 6px; }
+        .logo-area { text-align: center; margin-bottom: 20px; }
+        h1 { color: #1b3022; font-size: 24px; font-weight: 800; letter-spacing: 0.5px; }
+        .subtitle { color: #b8860b; font-size: 12px; margin-top: 4px; font-style: italic; font-weight: 600; }
+        
+        /* Abas Modernas */
+        .tabs { display: flex; gap: 6px; margin-bottom: 25px; background: #e8e2cd; padding: 4px; border-radius: 10px; border: 1px solid #d4af37; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; color: #1b3022; background: transparent; border-radius: 8px; font-size: 13px; transition: all 0.3s ease; }
+        .tab.active { background: #1b3022; color: #d4af37; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 700; margin-bottom: 8px; color: #1b3022; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        select, input { width: 100%; padding: 14px; border: 1.5px solid #d4af37; border-radius: 10px; font-size: 15px; background: #fff; color: #333; outline: none; transition: border-color 0.2s; }
+        select:focus, input:focus { border-color: #1b3022; }
+
+        .btn { width: 100%; padding: 16px; background: #1b3022; color: #d4af37; border: none; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; border: 1px solid #d4af37; box-shadow: 0 4px 12px rgba(27,48,34,0.3); transition: transform 0.1s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-gasto { background: #8b3a3a; color: white; border-color: #a04040; }
+        
+        /* Área do QR Code */
+        .qr-box { text-align: center; background: #fff; padding: 20px; border-radius: 12px; border: 1px dashed #d4af37; margin-top: 10px; }
+        .qr-box img { max-width: 180px; height: auto; margin: 15px 0; border: 4px solid #fdfbf7; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .qr-link { font-size: 12px; color: #1b3022; word-break: break-all; background: #f4edd3; padding: 8px; border-radius: 6px; display: inline-block; margin-top: 8px; font-weight: 600; }
+
+        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 15px; background: #1b3022; padding: 12px; border-radius: 8px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🥤 EMUNÁH GARAPARIA</h1>
-        <p>"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos."</p>
-    </div>
-
-    <!-- Navegação por Categorias -->
-    <div class="categorias">
-        <button class="cat-btn active" onclick="filtrarCategoria('todas')">Todas</button>
-        <button class="cat-btn" onclick="filtrarCategoria('garapas')">Garapas</button>
-        <button class="cat-btn" onclick="filtrarCategoria('lanches')">Salgados & Doces</button>
-        <button class="cat-btn" onclick="filtrarCategoria('bebidas')">Outras Bebidas</button>
-    </div>
-
-    <div class="container" id="listaProdutos">
-        <!-- Preenchido via JavaScript -->
-    </div>
-
-    <!-- Rodapé de Envio -->
-    <div class="bar-carrinho">
-        <div>
-            <div style="font-size: 11px;">Total do Pedido:</div>
-            <div class="total-carrinho" id="totalVisual">R$ 0,00</div>
+    <div class="container">
+        <div class="logo-area">
+            <h1>🥤 EMUNÁH PDV</h1>
+            <div class="subtitle">"Que o Senhor nosso Deus nos abençoe..."</div>
         </div>
-        <button class="btn-finalizar" onclick="abrirModal()">ENVIAR PEDIDO</button>
-    </div>
 
-    <!-- Modal de Dados do Cliente -->
-    <div class="modal" id="modalPedido">
-        <div class="modal-content">
-            <h2>Finalizar Pedido</h2>
-            <label style="font-size: 13px; font-weight: bold; color: #2c4c32;">Seu Nome ou Número da Mesa:</label>
-            <input type="text" id="nomeCliente" placeholder="Ex: João / Mesa 04">
-            
-            <label style="font-size: 13px; font-weight: bold; color: #2c4c32;">Forma de Pagamento:</label>
-            <select id="pagamentoCliente">
-                <option value="PIX">PIX</option>
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Cartão">Cartão</option>
-            </select>
-
-            <button class="btn-finalizar" style="width: 100%;" onclick="confirmarEnviarPedido()">CONFIRMAR E ENVIAR</button>
-            <button onclick="fecharModal()" style="width: 100%; margin-top: 8px; background: transparent; border: none; color: #666; cursor: pointer;">Cancelar</button>
+        <!-- Abas de Navegação do PDV -->
+        <div class="tabs">
+            <div class="tab active" onclick="mudarAba('venda')">Venda Balcão</div>
+            <div class="tab" onclick="mudarAba('gasto')">Lançar Gasto</div>
+            <div class="tab" onclick="mudarAba('qrcode')">QR Cardápio</div>
         </div>
+
+        <!-- Venda Balcão -->
+        <div id="secao-venda">
+            <div class="form-group">
+                <label>Selecionar Produto:</label>
+                <select id="produto">
+                    <option value="Garapa Natural 500ml" data-preco="7.00" data-custo="2.20">Garapa Natural 500ml - R$ 7,00</option>
+                    <option value="Garapa Natural 1L" data-preco="12.00" data-custo="4.00">Garapa Natural 1 Litro - R$ 12,00</option>
+                    <option value="Garapa com Limão" data-preco="8.00" data-custo="2.50">Garapa com Limão - R$ 8,00</option>
+                    <option value="Garapa com Abacaxi" data-preco="9.00" data-custo="3.00">Garapa com Abacaxi - R$ 9,00</option>
+                    <option value="Garapa com Morango" data-preco="10.00" data-custo="3.50">Garapa com Morango - R$ 10,00</option>
+                    <option value="Garapa com Maracujá" data-preco="10.00" data-custo="3.50">Garapa com Maracujá - R$ 10,00</option>
+                    <option value="Pastel" data-preco="8.00" data-custo="3.20">Pastel - R$ 8,00</option>
+                    <option value="Pamonha" data-preco="10.00" data-custo="4.50">Pamonha - R$ 10,00</option>
+                    <option value="Água de Côco" data-preco="6.00" data-custo="2.50">Água de Côco - R$ 6,00</option>
+                    <option value="Água Mineral" data-preco="4.00" data-custo="1.80">Água Mineral - R$ 4,00</option>
+                    <option value="Refrigerante" data-preco="6.00" data-custo="3.00">Refrigerante - R$ 6,00</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Quantidade:</label>
+                <input type="number" id="qtd" value="1" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Forma de Pagamento:</label>
+                <select id="pagamentoVenda">
+                    <option value="PIX">PIX</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão">Cartão</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="enviarVenda()">REGISTRAR VENDA</button>
+        </div>
+
+        <!-- Lançar Gasto -->
+        <div id="secao-gasto" style="display: none;">
+            <div class="form-group">
+                <label>Categoria do Gasto:</label>
+                <select id="categoriaGasto">
+                    <option value="Insumos">Insumos (Cana, Frutas, Copos)</option>
+                    <option value="Gelo">Gelo</option>
+                    <option value="Manutenção">Manutenção / Equipamentos</option>
+                    <option value="Despesas Fixas">Aluguel / Água / Luz</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descrição:</label>
+                <input type="text" id="descricaoGasto" placeholder="Ex: Compra de 3 sacos de gelo">
+            </div>
+
+            <div class="form-group">
+                <label>Valor (R$):</label>
+                <input type="number" id="valorGasto" step="0.01" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label>Forma de Pagamento:</label>
+                <select id="pagamentoGasto">
+                    <option value="PIX">PIX</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão">Cartão</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Comprovante (Foto):</label>
+                <input type="file" id="fotoComprovante" accept="image/*" capture="camera">
+            </div>
+
+            <button class="btn btn-gasto" onclick="enviarGasto()">REGISTRAR GASTO</button>
+        </div>
+
+        <!-- QR Code do Cardápio -->
+        <div id="secao-qrcode" style="display: none; text-align: center;">
+            <p style="font-size: 13px; color: #1b3022; margin-bottom: 10px; font-weight: 600;">Aponte a câmera para abrir o Cardápio Digital:</p>
+            <div class="qr-box">
+                <div id="qrCodeContainer"></div>
+                <div class="qr-link" id="linkCardapioTexto">Carregando link...</div>
+            </div>
+            <button class="btn" style="margin-top: 15px; background: #b8860b;" onclick="copiarLinkCardapio()">Copiar Link do Cardápio</button>
+        </div>
+
+        <div id="loading" class="loading">Processando e salvando... Aguarde.</div>
     </div>
 
+    <!-- Biblioteca para gerar QR Code automaticamente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <script>
         const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
 
-        const produtos = [
-            { id: 1, cat: 'garapas', nome: "Garapa Natural 500ml", preco: 7.00, custo: 2.20 },
-            { id: 2, cat: 'garapas', nome: "Garapa Natural 1L", preco: 12.00, custo: 4.00 },
-            { id: 3, cat: 'garapas', nome: "Garapa com Limão", preco: 8.00, custo: 2.50 },
-            { id: 4, cat: 'garapas', nome: "Garapa com Abacaxi", preco: 9.00, custo: 3.00 },
-            { id: 5, cat: 'garapas', nome: "Garapa com Morango", preco: 10.00, custo: 3.50 },
-            { id: 6, cat: 'garapas', nome: "Garapa com Maracujá", preco: 10.00, custo: 3.50 },
-            { id: 7, cat: 'lanches', nome: "Pastel", preco: 8.00, custo: 3.20 },
-            { id: 8, cat: 'lanches', nome: "Pamonha", preco: 10.00, custo: 4.50 },
-            { id: 9, cat: 'bebidas', nome: "Água de Côco", preco: 6.00, custo: 2.50 },
-            { id: 10, cat: 'bebidas', nome: "Água Mineral", preco: 4.00, custo: 1.80 },
-            { id: 11, cat: 'bebidas', nome: "Refrigerante", preco: 6.00, custo: 3.00 }
-        ];
+        // Gera automaticamente o link do cardápio com base na URL atual do GitHub Pages
+        const urlCardapio = window.location.href.replace('index.html', '').replace(/[\/]+$/, '') + '/cardapio.html';
+        document.getElementById('linkCardapioTexto').innerText = urlCardapio;
 
-        let carrinho = [];
+        // Gera o QR Code visual na tela
+        try {
+            var qr = qrcode(0, 'M');
+            qr.addData(urlCardapio);
+            qr.make();
+            document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(5, 6);
+        } catch(e) {
+            document.getElementById('qrCodeContainer').innerText = "Erro ao gerar QR Code";
+        }
 
-        function renderizarProdutos(categoria = 'todas') {
-            const container = document.getElementById('listaProdutos');
-            container.innerHTML = "";
+        function copiarLinkCardapio() {
+            navigator.clipboard.writeText(urlCardapio);
+            alert("Link do cardápio copiado para a área de transferência!");
+        }
 
-            const filtrados = categoria === 'todas' ? produtos : produtos.filter(p => p.cat === categoria);
-
-            filtrados.forEach(p => {
-                const itemCarrinho = carrinho.find(c => c.id === p.id);
-                const qtd = itemCarrinho ? itemCarrinho.qtd : 0;
-
-                const card = document.createElement('div');
-                card.className = 'card-produto';
-                card.innerHTML = `
-                    <div class="prod-info">
-                        <h3>${p.nome}</h3>
-                        <p>R$ ${p.preco.toFixed(2).replace('.', ',')}</p>
-                    </div>
-                    <div>
-                        ${qtd > 0 ? `
-                            <button onclick="alterarQtd(${p.id}, -1)" class="btn-add" style="background:#8b3a3a; border:none;">-</button>
-                            <span style="font-weight:bold; margin: 0 8px; color:#2c4c32;">${qtd}</span>
-                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+</button>
-                        ` : `
-                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+ Adicionar</button>
-                        `}
-                    </div>
-                `;
-                container.appendChild(card);
+        function mudarAba(aba) {
+            document.getElementById('secao-venda').style.display = (aba === 'venda') ? 'block' : 'none';
+            document.getElementById('secao-gasto').style.display = (aba === 'gasto') ? 'block' : 'none';
+            document.getElementById('secao-qrcode').style.display = (aba === 'qrcode') ? 'block' : 'none';
+            
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && aba === 'venda') || (i === 1 && aba === 'gasto') || (i === 2 && aba === 'qrcode'));
             });
-
-            atualizarTotal();
         }
 
-        function alterarQtd(id, delta) {
-            const prod = produtos.find(p => p.id === id);
-            let item = carrinho.find(c => c.id === id);
+        function mostrarCarregamento(ativo) {
+            document.getElementById('loading').style.display = ativo ? 'block' : 'none';
+        }
 
-            if (!item && delta > 0) {
-                carrinho.push({ ...prod, qtd: 1 });
-            } else if (item) {
-                item.qtd += delta;
-                if (item.qtd <= 0) {
-                    carrinho = carrinho.filter(c => c.id !== id);
-                }
+        async function enviarVenda() {
+            const selectProd = document.getElementById('produto');
+            const option = selectProd.options[selectProd.selectedIndex];
+            
+            const dados = {
+                acao: "venda",
+                produto: option.value,
+                qtd: document.getElementById('qtd').value,
+                valorUnitario: option.getAttribute('data-preco'),
+                custoUnitario: option.getAttribute('data-custo'),
+                formaPagamento: document.getElementById('pagamentoVenda').value
+            };
+
+            mostrarCarregamento(true);
+            try {
+                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
+                alert("Venda registrada com sucesso!");
+                document.getElementById('qtd').value = "1";
+            } catch (e) {
+                alert("Erro de conexão: " + e);
+            } finally {
+                mostrarCarregamento(false);
             }
-            renderizarProdutos(document.querySelector('.cat-btn.active').innerText.toLowerCase());
         }
 
-        function atualizarTotal() {
-            const total = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
-            document.getElementById('totalVisual').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
+        async function enviarGasto() {
+            const fileInput = document.getElementById('fotoComprovante');
+            let base64File = "";
+            let nomeArquivo = "";
 
-        function abrirModal() {
-            if (carrinho.length === 0) {
-                alert("Selecione ao menos um item no cardápio antes de enviar!");
-                return;
-            }
-            document.getElementById('modalPedido').style.display = 'flex';
-        }
+            mostrarCarregamento(true);
 
-        function fecharModal() {
-            document.getElementById('modalPedido').style.display = 'none';
-        }
-
-        async function confirmarEnviarPedido() {
-            const nome = document.getElementById('nomeCliente').value.trim();
-            if (!nome) {
-                alert("Por favor, digite seu nome ou número da mesa.");
-                return;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                nomeArquivo = `gasto_${new Date().getTime()}.jpg`;
+                base64File = await comprimirEConverterBase64(file);
             }
 
             const dados = {
-                acao: "pedido_cliente",
-                cliente: nome,
-                formaPagamento: document.getElementById('pagamentoCliente').value,
-                itens: carrinho
+                acao: "gasto",
+                categoria: document.getElementById('categoriaGasto').value,
+                descricao: document.getElementById('descricaoGasto').value,
+                valor: document.getElementById('valorGasto').value,
+                formaPagamento: document.getElementById('pagamentoGasto').value,
+                arquivoBase64: base64File,
+                nomeArquivo: nomeArquivo
             };
 
             try {
-                const res = await fetch(URL_APPS_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
-                const json = await res.json();
-                
-                if (json.status === "sucesso") {
-                    alert("Seu pedido foi enviado para o balcão! Aguarde o preparo. 🥤");
-                    carrinho = [];
-                    fecharModal();
-                    renderizarProdutos();
-                } else {
-                    alert("Erro ao enviar pedido: " + json.mensagem);
-                }
+                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
+                alert("Gasto registrado com sucesso!");
+                document.getElementById('descricaoGasto').value = "";
+                document.getElementById('valorGasto').value = "";
+                fileInput.value = "";
             } catch (e) {
-                alert("Erro de conexão ao enviar pedido.");
+                alert("Erro de conexão: " + e);
+            } finally {
+                mostrarCarregamento(false);
             }
         }
 
-        function filtrarCategoria(cat) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            renderizarProdutos(cat);
+        function comprimirEConverterBase64(arquivo) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(arquivo);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let largura = img.width;
+                        let altura = img.height;
+                        const maximo = 800;
+                        if (largura > maximo) {
+                            altura = (maximo / largura) * altura;
+                            largura = maximo;
+                        }
+                        canvas.width = largura;
+                        canvas.height = altura;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, largura, altura);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+            });
         }
-
-        window.onload = () => renderizarProdutos();
     </script>
 </body>
 </html>
