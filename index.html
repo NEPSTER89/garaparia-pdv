@@ -8,32 +8,33 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         body { background: #1b3022; padding: 15px; color: #333; }
         
-        .container { max-width: 500px; margin: 0 auto; background: #fdfbf7; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #d4af37; }
+        .container { max-width: 550px; margin: 0 auto; background: #fdfbf7; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #d4af37; }
         
-        .logo-area { text-align: center; margin-bottom: 20px; }
-        h1 { color: #1b3022; font-size: 24px; font-weight: 800; letter-spacing: 0.5px; }
-        .subtitle { color: #b8860b; font-size: 12px; margin-top: 4px; font-style: italic; font-weight: 600; }
+        .logo-area { text-align: center; margin-bottom: 15px; }
+        h1 { color: #1b3022; font-size: 22px; font-weight: 800; }
+        .subtitle { color: #b8860b; font-size: 11px; margin-top: 2px; font-style: italic; font-weight: 600; }
         
-        /* Abas Modernas */
-        .tabs { display: flex; gap: 6px; margin-bottom: 25px; background: #e8e2cd; padding: 4px; border-radius: 10px; border: 1px solid #d4af37; }
-        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; color: #1b3022; background: transparent; border-radius: 8px; font-size: 13px; transition: all 0.3s ease; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #e8e2cd; padding: 4px; border-radius: 10px; border: 1.5px solid #d4af37; }
+        .tab { flex: 1; padding: 9px 4px; text-align: center; cursor: pointer; font-weight: 700; color: #1b3022; background: transparent; border-radius: 8px; font-size: 12px; transition: all 0.3s ease; }
         .tab.active { background: #1b3022; color: #d4af37; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; color: #1b3022; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        select, input { width: 100%; padding: 14px; border: 1.5px solid #d4af37; border-radius: 10px; font-size: 15px; background: #fff; color: #333; outline: none; transition: border-color 0.2s; }
-        select:focus, input:focus { border-color: #1b3022; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 700; margin-bottom: 6px; color: #1b3022; font-size: 12px; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border: 1.5px solid #d4af37; border-radius: 10px; font-size: 14px; background: #fff; color: #333; outline: none; }
 
-        .btn { width: 100%; padding: 16px; background: #1b3022; color: #d4af37; border: none; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; border: 1px solid #d4af37; box-shadow: 0 4px 12px rgba(27,48,34,0.3); transition: transform 0.1s; }
-        .btn:active { transform: scale(0.98); }
+        .btn { width: 100%; padding: 14px; background: #1b3022; color: #d4af37; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 5px; border: 1px solid #d4af37; }
         .btn-gasto { background: #8b3a3a; color: white; border-color: #a04040; }
         
-        /* Área do QR Code */
-        .qr-box { text-align: center; background: #fff; padding: 20px; border-radius: 12px; border: 1px dashed #d4af37; margin-top: 10px; }
-        .qr-box img { max-width: 180px; height: auto; margin: 15px 0; border: 4px solid #fdfbf7; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .qr-link { font-size: 12px; color: #1b3022; word-break: break-all; background: #f4edd3; padding: 8px; border-radius: 6px; display: inline-block; margin-top: 8px; font-weight: 600; }
+        .card-pedido { background: #fff; border: 2px solid #d4af37; border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .card-pedido h3 { color: #1b3022; font-size: 16px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: flex; justify-content: space-between; }
+        .card-pedido p { font-size: 13px; color: #444; margin-bottom: 4px; }
+        .btn-concluir { background: #2c4c32; color: #d4af37; border: none; padding: 10px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 10px; width: 100%; }
 
-        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 15px; background: #1b3022; padding: 12px; border-radius: 8px; font-size: 14px; }
+        .qr-box { text-align: center; background: #fff; padding: 15px; border-radius: 12px; border: 1px dashed #d4af37; }
+        .qr-box img { max-width: 160px; height: auto; margin: 10px 0; border: 3px solid #fdfbf7; }
+        .qr-link { font-size: 11px; color: #1b3022; word-break: break-all; background: #f4edd3; padding: 6px; border-radius: 6px; display: inline-block; margin-top: 6px; font-weight: 600; }
+
+        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 10px; background: #1b3022; padding: 10px; border-radius: 8px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -41,13 +42,13 @@
     <div class="container">
         <div class="logo-area">
             <h1>🥤 EMUNÁH PDV</h1>
-            <div class="subtitle">"Que o Senhor nosso Deus nos abençoe..."</div>
+            <div class="subtitle">Painel de Controle e Atendimento</div>
         </div>
 
-        <!-- Abas de Navegação do PDV -->
         <div class="tabs">
             <div class="tab active" onclick="mudarAba('venda')">Venda Balcão</div>
-            <div class="tab" onclick="mudarAba('gasto')">Lançar Gasto</div>
+            <div class="tab" onclick="mudarAba('pedidos')">🔔 Pedidos</div>
+            <div class="tab" onclick="mudarAba('gasto')">Gastos</div>
             <div class="tab" onclick="mudarAba('qrcode')">QR Cardápio</div>
         </div>
 
@@ -87,10 +88,21 @@
             <button class="btn" onclick="enviarVenda()">REGISTRAR VENDA</button>
         </div>
 
+        <!-- Tela de Pedidos dos Clientes -->
+        <div id="secao-pedidos" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 14px; color: #1b3022;">Pedidos Chegando:</h3>
+                <button onclick="carregarPedidos()" style="background: #d4af37; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">🔄 Atualizar</button>
+            </div>
+            <div id="listaPedidosBalcao">
+                <p style="text-align: center; color: #666; font-size: 13px; padding: 20px;">Clique em atualizar para ver os pedidos.</p>
+            </div>
+        </div>
+
         <!-- Lançar Gasto -->
         <div id="secao-gasto" style="display: none;">
             <div class="form-group">
-                <label>Categoria do Gasto:</label>
+                <label>Categoria:</label>
                 <select id="categoriaGasto">
                     <option value="Insumos">Insumos (Cana, Frutas, Copos)</option>
                     <option value="Gelo">Gelo</option>
@@ -99,17 +111,14 @@
                     <option value="Outros">Outros</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>Descrição:</label>
-                <input type="text" id="descricaoGasto" placeholder="Ex: Compra de 3 sacos de gelo">
+                <input type="text" id="descricaoGasto" placeholder="Ex: Compra de gelo">
             </div>
-
             <div class="form-group">
                 <label>Valor (R$):</label>
                 <input type="number" id="valorGasto" step="0.01" placeholder="0.00">
             </div>
-
             <div class="form-group">
                 <label>Forma de Pagamento:</label>
                 <select id="pagamentoGasto">
@@ -118,71 +127,132 @@
                     <option value="Cartão">Cartão</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>Comprovante (Foto):</label>
                 <input type="file" id="fotoComprovante" accept="image/*" capture="camera">
             </div>
-
             <button class="btn btn-gasto" onclick="enviarGasto()">REGISTRAR GASTO</button>
         </div>
 
-        <!-- QR Code do Cardápio -->
+        <!-- QR Code -->
         <div id="secao-qrcode" style="display: none; text-align: center;">
-            <p style="font-size: 13px; color: #1b3022; margin-bottom: 10px; font-weight: 600;">Aponte a câmera para abrir o Cardápio Digital:</p>
+            <p style="font-size: 12px; color: #1b3022; margin-bottom: 8px; font-weight: 600;">QR Code do Cardápio Digital:</p>
             <div class="qr-box">
                 <div id="qrCodeContainer"></div>
-                <div class="qr-link" id="linkCardapioTexto">Carregando link...</div>
+                <div class="qr-link" id="linkCardapioTexto"></div>
             </div>
-            <button class="btn" style="margin-top: 15px; background: #b8860b;" onclick="copiarLinkCardapio()">Copiar Link do Cardápio</button>
+            <button class="btn" style="margin-top: 12px; background: #b8860b;" onclick="copiarLinkCardapio()">Copiar Link</button>
         </div>
 
-        <div id="loading" class="loading">Processando e salvando... Aguarde.</div>
+        <div id="loading" class="loading">Processando... Aguarde.</div>
     </div>
 
-    <!-- Biblioteca para gerar QR Code automaticamente -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <script>
         const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
 
-        // Gera automaticamente o link do cardápio com base na URL atual do GitHub Pages
         const urlCardapio = window.location.href.replace('index.html', '').replace(/[\/]+$/, '') + '/cardapio.html';
         document.getElementById('linkCardapioTexto').innerText = urlCardapio;
-
-        // Gera o QR Code visual na tela
         try {
             var qr = qrcode(0, 'M');
             qr.addData(urlCardapio);
             qr.make();
-            document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(5, 6);
-        } catch(e) {
-            document.getElementById('qrCodeContainer').innerText = "Erro ao gerar QR Code";
-        }
+            document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(4, 5);
+        } catch(e) {}
 
         function copiarLinkCardapio() {
             navigator.clipboard.writeText(urlCardapio);
-            alert("Link do cardápio copiado para a área de transferência!");
+            alert("Link copiado!");
         }
 
         function mudarAba(aba) {
             document.getElementById('secao-venda').style.display = (aba === 'venda') ? 'block' : 'none';
+            document.getElementById('secao-pedidos').style.display = (aba === 'pedidos') ? 'block' : 'none';
             document.getElementById('secao-gasto').style.display = (aba === 'gasto') ? 'block' : 'none';
             document.getElementById('secao-qrcode').style.display = (aba === 'qrcode') ? 'block' : 'none';
             
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach((t, i) => {
-                t.classList.toggle('active', (i === 0 && aba === 'venda') || (i === 1 && aba === 'gasto') || (i === 2 && aba === 'qrcode'));
+                t.classList.toggle('active', (i === 0 && aba === 'venda') || (i === 1 && aba === 'pedidos') || (i === 2 && aba === 'gasto') || (i === 3 && aba === 'qrcode'));
             });
+
+            if(aba === 'pedidos') {
+                carregarPedidos();
+            }
         }
 
-        function mostrarCarregamento(ativo) {
-            document.getElementById('loading').style.display = ativo ? 'block' : 'none';
+        async function carregarPedidos() {
+            const container = document.getElementById('listaPedidosBalcao');
+            container.innerHTML = '<p style="text-align: center; color: #666; padding: 15px;">Buscando pedidos...</p>';
+            
+            try {
+                const res = await fetch(URL_APPS_SCRIPT);
+                const pedidos = await res.json();
+                
+                container.innerHTML = "";
+                if (!pedidos || pedidos.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 15px;">Nenhum pedido pendente.</p>';
+                    return;
+                }
+
+                pedidos.reverse().forEach((p, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card-pedido';
+                    card.innerHTML = `
+                        <h3><span>📋 Pedido</span> <span style="font-size: 12px; color: #b8860b;">R$ ${Number(p.total).toFixed(2).replace('.', ',')}</span></h3>
+                        <p><strong>Item:</strong> ${p.produto}</p>
+                        <p><strong>Qtd:</strong> ${p.qtd} | <strong>Pagamento:</strong> ${p.pagamento}</p>
+                        <p style="font-size: 11px; color: #886; margin-top: 4px;">Horário: ${new Date(p.dataHora).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        <button class="btn-concluir" onclick='concluirEBaixarEstoque(${JSON.stringify(p)}, this)'>✔️ Concluir / Baixar no Caixa e Estoque</button>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch(e) {
+                container.innerHTML = '<p style="text-align: center; color: #8b3a3a; padding: 15px;">Erro ao carregar pedidos.</p>';
+            }
+        }
+
+        async function concluirEBaixarEstoque(pedido, botaoElemento) {
+            if (!confirm(`Confirmar conclusão do pedido de ${pedido.produto} (Qtd: ${pedido.qtd})? Isso atualizará o caixa e o estoque.`)) {
+                return;
+            }
+
+            botaoElemento.innerText = "Processando baixa...";
+            botaoElemento.disabled = true;
+
+            const dados = {
+                acao: "concluir_pedido",
+                pagamento: pedido.pagamento,
+                itens: [
+                    {
+                        nome: pedido.produto,
+                        qtd: pedido.qtd,
+                        preco: Number(pedido.total) / Number(pedido.qtd),
+                        custo: 2.00 // Custo base estimado ou ajustável
+                    }
+                ]
+            };
+
+            try {
+                await fetch(URL_APPS_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(dados)
+                });
+
+                alert("Pedido concluído! Caixa atualizado e estoque baixado com sucesso.");
+                botaoElemento.parentElement.remove(); // Remove o card da tela
+            } catch (e) {
+                alert("Erro ao processar baixa: " + e);
+                botaoElemento.innerText = "✔️ Concluir / Baixar no Caixa e Estoque";
+                botaoElemento.disabled = false;
+            }
         }
 
         async function enviarVenda() {
             const selectProd = document.getElementById('produto');
             const option = selectProd.options[selectProd.selectedIndex];
-            
             const dados = {
                 acao: "venda",
                 produto: option.value,
@@ -191,14 +261,13 @@
                 custoUnitario: option.getAttribute('data-custo'),
                 formaPagamento: document.getElementById('pagamentoVenda').value
             };
-
             mostrarCarregamento(true);
             try {
                 await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-                alert("Venda registrada com sucesso!");
+                alert("Venda registrada e estoque baixado com sucesso!");
                 document.getElementById('qtd').value = "1";
             } catch (e) {
-                alert("Erro de conexão: " + e);
+                alert("Erro de conexão.");
             } finally {
                 mostrarCarregamento(false);
             }
@@ -206,17 +275,13 @@
 
         async function enviarGasto() {
             const fileInput = document.getElementById('fotoComprovante');
-            let base64File = "";
-            let nomeArquivo = "";
-
+            let base64File = "", nomeArquivo = "";
             mostrarCarregamento(true);
-
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 nomeArquivo = `gasto_${new Date().getTime()}.jpg`;
                 base64File = await comprimirEConverterBase64(file);
             }
-
             const dados = {
                 acao: "gasto",
                 categoria: document.getElementById('categoriaGasto').value,
@@ -226,15 +291,14 @@
                 arquivoBase64: base64File,
                 nomeArquivo: nomeArquivo
             };
-
             try {
                 await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-                alert("Gasto registrado com sucesso!");
+                alert("Gasto registrado!");
                 document.getElementById('descricaoGasto').value = "";
                 document.getElementById('valorGasto').value = "";
                 fileInput.value = "";
             } catch (e) {
-                alert("Erro de conexão: " + e);
+                alert("Erro de conexão.");
             } finally {
                 mostrarCarregamento(false);
             }
@@ -249,15 +313,10 @@
                     img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let largura = img.width;
-                        let altura = img.height;
+                        let largura = img.width, altura = img.height;
                         const maximo = 800;
-                        if (largura > maximo) {
-                            altura = (maximo / largura) * altura;
-                            largura = maximo;
-                        }
-                        canvas.width = largura;
-                        canvas.height = altura;
+                        if (largura > maximo) { altura = (maximo / largura) * altura; largura = maximo; }
+                        canvas.width = largura; canvas.height = altura;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, largura, altura);
                         resolve(canvas.toDataURL('image/jpeg', 0.7));
