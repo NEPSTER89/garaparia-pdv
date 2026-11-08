@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Digital - Emunáh Garaparia</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background: #1b3022; padding-bottom: 95px; color: #333; }
+        
+        .header { background: #1b3022; color: #d4af37; text-align: center; padding: 25px 15px; border-bottom: 2px solid #d4af37; }
+        .header h1 { font-size: 24px; font-weight: 800; }
+        .header p { font-size: 12px; font-style: italic; margin-top: 6px; color: #f4edd3; }
+
+        .categorias { display: flex; overflow-x: auto; background: #2c4c32; padding: 12px; gap: 8px; border-bottom: 1px solid #d4af37; scrollbar-width: none; }
+        .cat-btn { background: #f4edd3; color: #2c4c32; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; }
+        .cat-btn.active { background: #d4af37; color: #1b3022; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+
+        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
+        .card-produto { background: #fdfbf7; border: 1.5px solid #d4af37; border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .prod-info h3 { font-size: 15px; color: #1b3022; font-weight: 700; }
+        .prod-info p { font-size: 14px; color: #b8860b; font-weight: 800; margin-top: 4px; }
+        .btn-add { background: #1b3022; color: #d4af37; border: 1px solid #d4af37; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+
+        .bar-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: #1b3022; border-top: 2px solid #d4af37; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; max-width: 500px; margin: 0 auto; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); }
+        .total-carrinho { font-size: 17px; font-weight: 800; color: #d4af37; }
+        .btn-finalizar { background: #d4af37; color: #1b3022; border: none; padding: 12px 22px; border-radius: 8px; font-weight: 800; font-size: 15px; cursor: pointer; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #fdfbf7; border: 2px solid #d4af37; padding: 25px; border-radius: 16px; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-content h2 { color: #1b3022; margin-bottom: 15px; font-size: 18px; }
+        .modal-content input, .modal-content select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1.5px solid #d4af37; border-radius: 8px; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🥤 EMUNÁH GARAPARIA</h1>
+        <p>"Que o Senhor nosso Deus nos abençoe e faça prosperar o trabalho de nossas mãos."</p>
+    </div>
+
+    <div class="categorias">
+        <button class="cat-btn active" onclick="filtrarCategoria('todas')">Todas</button>
+        <button class="cat-btn" onclick="filtrarCategoria('garapas')">Garapas</button>
+        <button class="cat-btn" onclick="filtrarCategoria('lanches')">Salgados & Doces</button>
+        <button class="cat-btn" onclick="filtrarCategoria('bebidas')">Outras Bebidas</button>
+    </div>
+
+    <div class="container" id="listaProdutos"></div>
+
+    <div class="bar-carrinho">
+        <div>
+            <div style="font-size: 11px; color: #f4edd3;">Total do Pedido:</div>
+            <div class="total-carrinho" id="totalVisual">R$ 0,00</div>
+        </div>
+        <button class="btn-finalizar" onclick="abrirModal()">ENVIAR PEDIDO</button>
+    </div>
+
+    <div class="modal" id="modalPedido">
+        <div class="modal-content">
+            <h2>Finalizar Pedido</h2>
+            <label style="font-size: 12px; font-weight: 700; color: #1b3022;">Seu Nome ou Número da Mesa:</label>
+            <input type="text" id="nomeCliente" placeholder="Ex: João / Mesa 04">
+            
+            <label style="font-size: 12px; font-weight: 700; color: #1b3022;">Forma de Pagamento:</label>
+            <select id="pagamentoCliente">
+                <option value="PIX">PIX</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão">Cartão</option>
+            </select>
+
+            <button class="btn-finalizar" style="width: 100%;" onclick="confirmarEnviarPedido()">CONFIRMAR E ENVIAR</button>
+            <button onclick="fecharModal()" style="width: 100%; margin-top: 10px; background: transparent; border: none; color: #666; cursor: pointer; font-weight: 600;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
+
+        const produtos = [
+            { id: 1, cat: 'garapas', nome: "Garapa Natural 500ml", preco: 7.00, custo: 2.20 },
+            { id: 2, cat: 'garapas', nome: "Garapa Natural 1L", preco: 12.00, custo: 4.00 },
+            { id: 3, cat: 'garapas', nome: "Garapa com Limão", preco: 8.00, custo: 2.50 },
+            { id: 4, cat: 'garapas', nome: "Garapa com Abacaxi", preco: 9.00, custo: 3.00 },
+            { id: 5, cat: 'garapas', nome: "Garapa com Morango", preco: 10.00, custo: 3.50 },
+            { id: 6, cat: 'garapas', nome: "Garapa com Maracujá", preco: 10.00, custo: 3.50 },
+            { id: 7, cat: 'lanches', nome: "Pastel", preco: 8.00, custo: 3.20 },
+            { id: 8, cat: 'lanches', nome: "Pamonha", preco: 10.00, custo: 4.50 },
+            { id: 9, cat: 'bebidas', nome: "Água de Côco", preco: 6.00, custo: 2.50 },
+            { id: 10, cat: 'bebidas', nome: "Água Mineral", preco: 4.00, custo: 1.80 },
+            { id: 11, cat: 'bebidas', nome: "Refrigerante", preco: 6.00, custo: 3.00 }
+        ];
+
+        let carrinho = [];
+
+        function renderizarProdutos(categoria = 'todas') {
+            const container = document.getElementById('listaProdutos');
+            container.innerHTML = "";
+            const filtrados = categoria === 'todas' ? produtos : produtos.filter(p => p.cat === categoria);
+
+            filtrados.forEach(p => {
+                const itemCarrinho = carrinho.find(c => c.id === p.id);
+                const qtd = itemCarrinho ? itemCarrinho.qtd : 0;
+
+                const card = document.createElement('div');
+                card.className = 'card-produto';
+                card.innerHTML = `
+                    <div class="prod-info">
+                        <h3>${p.nome}</h3>
+                        <p>R$ ${p.preco.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div>
+                        ${qtd > 0 ? `
+                            <button onclick="alterarQtd(${p.id}, -1)" class="btn-add" style="background:#8b3a3a; border:none; color:white;">-</button>
+                            <span style="font-weight:800; margin: 0 8px; color:#1b3022;">${qtd}</span>
+                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+</button>
+                        ` : `
+                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+ Adicionar</button>
+                        `}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            atualizarTotal();
+        }
+
+        function alterarQtd(id, delta) {
+            const prod = produtos.find(p => p.id === id);
+            let item = carrinho.find(c => c.id === id);
+
+            if (!item && delta > 0) {
+                carrinho.push({ ...prod, qtd: 1 });
+            } else if (item) {
+                item.qtd += delta;
+                if (item.qtd <= 0) {
+                    carrinho = carrinho.filter(c => c.id !== id);
+                }
+            }
+            renderizarProdutos(document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('garapa') ? 'garapas' : (document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('salgados') ? 'lanches' : (document.querySelector('.cat-btn.active').innerText.toLowerCase().includes('bebidas') ? 'bebidas' : 'todas')));
+        }
+
+        function atualizarTotal() {
+            const total = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
+            document.getElementById('totalVisual').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function abrirModal() {
+            if (carrinho.length === 0) {
+                alert("Selecione ao menos um item no cardápio antes de enviar!");
+                return;
+            }
+            document.getElementById('modalPedido').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalPedido').style.display = 'none';
+        }
+
+        async function confirmarEnviarPedido() {
+            const nome = document.getElementById('nomeCliente').value.trim();
+            if (!nome) {
+                alert("Por favor, digite seu nome ou número da mesa.");
+                return;
+            }
+
+            const dados = {
+                acao: "pedido_cliente",
+                cliente: nome,
+                formaPagamento: document.getElementById('pagamentoCliente').value,
+                itens: carrinho
+            };
+
+            try {
+                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
+                alert("Pedido enviado para o balcão com sucesso! 🥤");
+                carrinho = [];
+                fecharModal();
+                renderizarProdutos();
+            } catch (e) {
+                alert("Erro de conexão ao enviar pedido.");
+            }
+        }
+
+        function filtrarCategoria(cat) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderizarProdutos(cat);
+        }
+
+        window.onload = () => renderizarProdutos();
+    </script>
+</body>
+</html>
