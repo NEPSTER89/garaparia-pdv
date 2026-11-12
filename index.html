@@ -525,6 +525,26 @@ td {
 @media(max-width:900px){.venda-grid{grid-template-columns:1fr}}
 @media(max-width:450px){.produto-venda-lista{grid-template-columns:1fr}.carrinho-linha{grid-template-columns:1fr 62px 75px 25px}.pagamento-linha{grid-template-columns:1fr 100px 28px}}
 
+
+.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.module-card{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:18px}
+.module-card small{display:block;color:var(--cinza);font-size:11px;font-weight:bold;text-transform:uppercase}
+.module-card strong{display:block;color:var(--verde);font-size:23px;margin-top:8px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.filters>*{flex:1;min-width:150px}
+.inline-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.inline-form .full{grid-column:1/-1}
+.table-wrap{overflow-x:auto}
+.table-wrap table{width:100%;border-collapse:collapse;min-width:650px}
+.table-wrap th,.table-wrap td{padding:11px 9px;border-bottom:1px solid var(--borda);text-align:left;font-size:12px;vertical-align:top}
+.table-wrap th{color:var(--cinza);background:#f7f9f6}
+.empty{padding:22px;text-align:center;color:var(--cinza);background:#f8faf8;border-radius:9px;font-size:13px}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:bold}
+.badge-ativo{background:#e2f1e5;color:#28643b}.badge-inativo{background:#f8e5e3;color:#a33a32}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:900px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.main{padding:15px}.module-grid{grid-template-columns:1fr}.inline-form{grid-template-columns:1fr}.inline-form .full{grid-column:auto}.cards{grid-template-columns:1fr}}
+
 </style>
 </head>
 
@@ -542,11 +562,11 @@ td {
       <button class="active" onclick="abrirSecao('inicio',this)">⌂ Início</button>
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
       <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
-      <button onclick="futuraFuncao('Pedidos')">♧ Pedidos</button>
-      <button onclick="futuraFuncao('Estoque')">▤ Estoque</button>
-      <button onclick="futuraFuncao('Caixa')">＄ Caixa</button>
-      <button onclick="futuraFuncao('Relatórios')">▥ Relatórios</button>
-      <button onclick="futuraFuncao('Configurações')">⚙ Configurações</button>
+      <button onclick="abrirSecao('pedidos',this)">♧ Pedidos</button>
+      <button onclick="abrirSecao('estoque',this)">▤ Estoque</button>
+      <button onclick="abrirSecao('caixa',this)">＄ Caixa</button>
+      <button onclick="abrirSecao('relatorios',this)">▥ Relatórios</button>
+      <button onclick="abrirSecao('configuracoes',this)">⚙ Configurações</button>
     </nav>
 
     <div class="sidebar-footer">
@@ -703,6 +723,61 @@ td {
           <div class="notice">Os preços são confirmados pelo servidor. Produtos com controle de estoque terão baixa automática somente após a venda ser validada e registrada.</div>
         </div>
       </div>
+    </section>
+
+
+    <section id="secao-pedidos" class="secao">
+      <div class="panel"><div class="panel-header"><h3>Pedidos recebidos</h3><button class="btn btn-secondary" onclick="carregarPedidos()">↻ Atualizar</button></div>
+        <div class="filters"><select id="filtroPedidos" onchange="carregarPedidos()"><option value="">Todos os status</option><option value="PENDENTE">Pendentes</option><option value="EM_PREPARACAO">Em preparação</option><option value="CONCLUIDO">Concluídos</option><option value="CANCELADO">Cancelados</option></select></div>
+        <div id="listaPedidos"><div class="empty">Carregando pedidos...</div></div>
+      </div>
+    </section>
+    <section id="secao-estoque" class="secao">
+      <div class="module-grid">
+        <div class="module-card"><small>Produtos com controle</small><strong id="estoqueControlados">0</strong></div>
+        <div class="module-card"><small>Itens abaixo do mínimo</small><strong id="estoqueBaixo">0</strong></div>
+        <div class="module-card"><small>Unidades em estoque</small><strong id="estoqueUnidades">0</strong></div>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>Registrar movimentação</h3></div>
+        <form class="inline-form" onsubmit="registrarMovimentacaoEstoque(event)">
+          <div class="form-group"><label>Produto</label><select id="estoqueProduto" required></select></div>
+          <div class="form-group"><label>Tipo</label><select id="estoqueTipo"><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída / Ajuste</option></select></div>
+          <div class="form-group"><label>Quantidade</label><input id="estoqueQuantidade" type="number" min="1" step="1" required></div>
+          <div class="form-group"><label>Custo unitário (R$) — entrada</label><input id="estoqueCusto" type="number" min="0" step="0.01"></div>
+          <div class="form-group full"><label>Motivo</label><input id="estoqueMotivo" placeholder="Compra, perda, consumo, ajuste"></div>
+          <div class="form-group full"><button class="btn btn-primary" type="submit">Registrar movimentação</button></div>
+        </form>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>Posição atual</h3><button class="btn btn-secondary" onclick="renderizarEstoque()">↻ Atualizar</button></div><div id="tabelaEstoque"></div></div>
+      <div class="panel"><div class="panel-header"><h3>Últimas movimentações</h3><button class="btn btn-secondary" onclick="carregarMovimentacoes()">↻ Atualizar</button></div><div id="listaMovimentacoes"></div></div>
+    </section>
+    <section id="secao-caixa" class="secao">
+      <div class="module-grid"><div class="module-card"><small>Entradas</small><strong id="caixaEntradas">R$ 0,00</strong></div><div class="module-card"><small>Saídas</small><strong id="caixaSaidas">R$ 0,00</strong></div><div class="module-card"><small>Saldo</small><strong id="caixaSaldo">R$ 0,00</strong></div></div>
+      <div class="panel"><div class="panel-header"><h3>Novo lançamento manual</h3></div>
+        <form class="inline-form" onsubmit="registrarLancamento(event)">
+          <div class="form-group"><label>Tipo</label><select id="caixaTipo"><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option></select></div>
+          <div class="form-group"><label>Valor (R$)</label><input id="caixaValor" type="number" min="0.01" step="0.01" required></div>
+          <div class="form-group"><label>Descrição</label><input id="caixaDescricao" required maxlength="150" placeholder="Ex.: Compra de material"></div>
+          <div class="form-group"><label>Forma</label><select id="caixaForma"><option>DINHEIRO</option><option>PIX</option><option>CARTÃO DE DÉBITO</option><option>CARTÃO DE CRÉDITO</option><option>TRANSFERÊNCIA</option><option>OUTRO</option></select></div>
+          <div class="form-group full"><button class="btn btn-primary" type="submit">Salvar lançamento</button></div>
+        </form>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>Movimentações do caixa</h3><button class="btn btn-secondary" onclick="carregarCaixa()">↻ Atualizar</button></div><div id="listaCaixa"></div></div>
+    </section>
+    <section id="secao-relatorios" class="secao">
+      <div class="panel"><div class="panel-header"><h3>Relatórios do período</h3></div>
+        <div class="filters"><div class="form-group"><label>Data inicial</label><input id="relatorioInicio" type="date"></div><div class="form-group"><label>Data final</label><input id="relatorioFim" type="date"></div><button class="btn btn-primary" onclick="carregarRelatorios()">Gerar relatório</button></div>
+      </div>
+      <div class="module-grid">
+        <div class="module-card"><small>Vendas concluídas</small><strong id="relVendas">R$ 0,00</strong></div><div class="module-card"><small>Pedidos concluídos</small><strong id="relPedidos">0</strong></div><div class="module-card"><small>Itens vendidos</small><strong id="relItens">0</strong></div><div class="module-card"><small>Entradas</small><strong id="relEntradas">R$ 0,00</strong></div><div class="module-card"><small>Saídas</small><strong id="relSaidas">R$ 0,00</strong></div><div class="module-card"><small>Saldo caixa</small><strong id="relSaldo">R$ 0,00</strong></div>
+      </div>
+      <div class="panel"><div class="panel-header"><h3>Vendas por forma de pagamento</h3></div><div id="relPorForma"></div></div>
+      <div class="panel"><div class="panel-header"><h3>Itens vendidos</h3></div><div id="relListaVendas"></div></div>
+    </section>
+    <section id="secao-configuracoes" class="secao">
+      <div class="panel"><div class="panel-header"><h3>Diagnóstico do sistema</h3><button class="btn btn-primary" onclick="validarSistema()">Verificar agora</button></div><div id="diagnosticoSistema" class="empty">Clique em verificar para testar servidor e planilha.</div></div>
+      <div class="panel"><h3 style="margin-bottom:12px">Integrações</h3><p style="font-size:13px;line-height:1.8">Aplicação: EMUNÁH PDV<br>Banco: Google Sheets<br>Servidor: Google Apps Script<br>Moeda: BRL<br>Fuso: America/Sao_Paulo<br>Acesso: sem PIN.</p></div>
+      <div class="panel"><h3 style="margin-bottom:12px">Fluxo operacional</h3><p style="font-size:13px;line-height:1.8">Pedidos QR entram como PENDENTE. O atendente inicia o preparo e conclui. Na conclusão, o sistema registra o caixa e baixa o estoque controlado. Vendas de balcão registram pedido, caixa e estoque automaticamente.</p></div>
     </section>
 
   </main>
@@ -1258,20 +1333,27 @@ function abrirSecao(secao, botao) {
 
   if (botao) botao.classList.add("active");
 
+
   const titulos = {
-    inicio: ["Visão geral", "Painel de controle da garaparia"],
-    produtos: ["Produtos", "Gerenciamento do catálogo"],
-    vendas: ["Vendas", "PDV · Registro de vendas e pagamentos"]
+    inicio:["Visão geral","Painel de controle da garaparia"],
+    produtos:["Produtos","Gerenciamento do catálogo"],
+    vendas:["Vendas","PDV · Registro de vendas e pagamentos"],
+    pedidos:["Pedidos","Acompanhe e conclua pedidos QR"],
+    estoque:["Estoque","Entradas, saídas e posição atual"],
+    caixa:["Caixa","Entradas, saídas e lançamentos"],
+    relatorios:["Relatórios","Resumo de vendas e movimentações"],
+    configuracoes:["Configurações","Diagnóstico e integrações"]
   };
-
-  document.getElementById("tituloPagina").textContent =
-    titulos[secao][0];
-
-  document.getElementById("subtituloPagina").textContent =
-    titulos[secao][1];
-
+  document.getElementById("tituloPagina").textContent=titulos[secao][0];
+  document.getElementById("subtituloPagina").textContent=titulos[secao][1];
   document.getElementById("sidebar").classList.remove("mobile-open");
-  if (secao === "vendas") carregarProdutosVenda();
+  if(secao==="vendas")carregarProdutosVenda();
+  if(secao==="pedidos")carregarPedidos();
+  if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();}
+  if(secao==="caixa")carregarCaixa();
+  if(secao==="relatorios")carregarRelatorios();
+  if(secao==="configuracoes")validarSistema();
+
 }
 
 function toggleMenu() {
@@ -1279,13 +1361,7 @@ function toggleMenu() {
     .classList.toggle("mobile-open");
 }
 
-function futuraFuncao(nome) {
-  mostrarMensagem(
-    "O módulo de " + nome +
-    " será integrado na próxima etapa.",
-    "success"
-  );
-}
+function futuraFuncao(nome) { mostrarMensagem("Módulo indisponível: "+nome,"error"); }
 
 // ======================================================
 // MODAL
