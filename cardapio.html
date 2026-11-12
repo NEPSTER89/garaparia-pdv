@@ -59,12 +59,7 @@
     </div>
 
     <div class="categorias-wrapper">
-        <div class="categorias">
-            <button class="cat-btn active" onclick="filtrarCategoria('todas')">🌟 Todos</button>
-            <button class="cat-btn" onclick="filtrarCategoria('garapas')">🥤 Garapas</button>
-            <button class="cat-btn" onclick="filtrarCategoria('lanches')">🥟 Salgados & Doces</button>
-            <button class="cat-btn" onclick="filtrarCategoria('bebidas')">🧊 Bebidas</button>
-        </div>
+        <div class="categorias" id="categorias"></div>
     </div>
 
     <div class="container" id="listaProdutos"></div>
@@ -97,124 +92,102 @@
 
     <script>
         const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
-
-        const produtos = [
-            { id: 1, cat: 'garapas', nome: "Garapa Natural 500ml", preco: 7.00, custo: 2.20 },
-            { id: 2, cat: 'garapas', nome: "Garapa Natural 1L", preco: 12.00, custo: 4.00 },
-            { id: 3, cat: 'garapas', nome: "Garapa com Limão", preco: 8.00, custo: 2.50 },
-            { id: 4, cat: 'garapas', nome: "Garapa com Abacaxi", preco: 9.00, custo: 3.00 },
-            { id: 5, cat: 'garapas', nome: "Garapa com Morango", preco: 10.00, custo: 3.50 },
-            { id: 6, cat: 'garapas', nome: "Garapa com Maracujá", preco: 10.00, custo: 3.50 },
-            { id: 7, cat: 'lanches', nome: "Pastel", preco: 8.00, custo: 3.20 },
-            { id: 8, cat: 'lanches', nome: "Pamonha", preco: 10.00, custo: 4.50 },
-            { id: 9, cat: 'bebidas', nome: "Água de Côco", preco: 6.00, custo: 2.50 },
-            { id: 10, cat: 'bebidas', nome: "Água Mineral", preco: 4.00, custo: 1.80 },
-            { id: 11, cat: 'bebidas', nome: "Refrigerante", preco: 6.00, custo: 3.00 }
-        ];
-
+        let produtos = [];
         let carrinho = [];
+        let categoriaAtual = "todas";
 
-        function renderizarProdutos(categoria = 'todas') {
-            const container = document.getElementById('listaProdutos');
+        const moeda = valor => Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        const escapar = valor => String(valor ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
+        async function carregarProdutos() {
+            const container = document.getElementById("listaProdutos");
+            container.innerHTML = '<p style="text-align:center;color:#e8e2cd;padding:24px">Carregando cardápio...</p>';
+            try {
+                const resp = await fetch(URL_APPS_SCRIPT + "?acao=listarProdutos&publico=1", { method: "GET", redirect: "follow" });
+                if (!resp.ok) throw new Error("Não foi possível consultar o catálogo.");
+                const json = await resp.json();
+                if (!json.sucesso) throw new Error(json.mensagem || "Erro ao carregar produtos.");
+                produtos = Array.isArray(json.dados) ? json.dados.filter(p => p.ativo === true) : [];
+                renderizarCategorias();
+                renderizarProdutos("todas");
+            } catch (erro) {
+                container.innerHTML = `<p style="text-align:center;color:#ffd6d6;padding:24px">${escapar(erro.message)}<br>Atualize a página ou tente novamente mais tarde.</p>`;
+            }
+        }
+
+        function renderizarCategorias() {
+            const categorias = [...new Set(produtos.map(p => String(p.categoria || "Outros").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+            const el = document.getElementById("categorias");
+            el.innerHTML = `<button class="cat-btn ${categoriaAtual === 'todas' ? 'active' : ''}" onclick="filtrarCategoria('todas')">🌟 Todos</button>` +
+                categorias.map(c => `<button class="cat-btn ${categoriaAtual === c ? 'active' : ''}" onclick="filtrarCategoria(decodeURIComponent('${encodeURIComponent(c)}'))">${escapar(c)}</button>`).join("");
+        }
+
+        function renderizarProdutos(categoria = "todas") {
+            categoriaAtual = categoria;
+            renderizarCategorias();
+            const container = document.getElementById("listaProdutos");
             container.innerHTML = "";
-            const filtrados = categoria === 'todas' ? produtos : produtos.filter(p => p.cat === categoria);
-
+            const filtrados = categoria === "todas" ? produtos : produtos.filter(p => String(p.categoria || "Outros").trim() === categoria);
+            if (!filtrados.length) {
+                container.innerHTML = '<p style="text-align:center;color:#e8e2cd;padding:24px">Nenhum produto disponível nesta categoria.</p>';
+                atualizarTotal(); return;
+            }
             filtrados.forEach(p => {
-                const itemCarrinho = carrinho.find(c => c.id === p.id);
-                const qtd = itemCarrinho ? itemCarrinho.qtd : 0;
-
-                const card = document.createElement('div');
-                card.className = 'card-produto';
-                card.innerHTML = `
-                    <div class="prod-info">
-                        <h3>${p.nome}</h3>
-                        <p>R$ ${p.preco.toFixed(2).replace('.', ',')}</p>
-                    </div>
-                    <div>
-                        ${qtd > 0 ? `
-                            <div class="acoes-qtd">
-                                <button onclick="alterarQtd(${p.id}, -1)" class="btn-add btn-menos">-</button>
-                                <span class="qtd-texto">${qtd}</span>
-                                <button onclick="alterarQtd(${p.id}, 1)" class="btn-add">+</button>
-                            </div>
-                        ` : `
-                            <button onclick="alterarQtd(${p.id}, 1)" class="btn-adicionar-simples">+ Adicionar</button>
-                        `}
-                    </div>
-                `;
+                const item = carrinho.find(c => c.produto_id === p.produto_id);
+                const qtd = item ? item.qtd : 0;
+                const card = document.createElement("div");
+                card.className = "card-produto";
+                card.innerHTML = `<div class="prod-info"><h3>${escapar(p.nome)}</h3><p>${moeda(p.preco_venda)}</p></div><div>${qtd > 0 ? `<div class="acoes-qtd"><button onclick="alterarQtd('${escapar(p.produto_id)}',-1)" class="btn-add btn-menos">-</button><span class="qtd-texto">${qtd}</span><button onclick="alterarQtd('${escapar(p.produto_id)}',1)" class="btn-add">+</button></div>` : `<button onclick="alterarQtd('${escapar(p.produto_id)}',1)" class="btn-adicionar-simples">+ Adicionar</button>`}</div>`;
                 container.appendChild(card);
             });
             atualizarTotal();
         }
 
         function alterarQtd(id, delta) {
-            let item = carrinho.find(c => c.id === id);
-
-            if (!item && delta > 0) {
-                const prod = produtos.find(p => p.id === id);
-                carrinho.push({ ...prod, qtd: 1 });
-            } else if (item) {
-                item.qtd += delta;
-                if (item.qtd <= 0) {
-                    carrinho = carrinho.filter(c => c.id !== id);
-                }
-            }
-            const catAtiva = document.querySelector('.cat-btn.active').getAttribute('onclick').match(/'([^']+)'/)[1];
-            renderizarProdutos(catAtiva);
+            const p = produtos.find(x => String(x.produto_id) === String(id));
+            if (!p) return;
+            let item = carrinho.find(c => String(c.produto_id) === String(id));
+            if (!item && delta > 0) carrinho.push({ produto_id: p.produto_id, nome: p.nome, preco: Number(p.preco_venda), qtd: 1 });
+            else if (item) { item.qtd += delta; if (item.qtd <= 0) carrinho = carrinho.filter(c => String(c.produto_id) !== String(id)); }
+            renderizarProdutos(categoriaAtual);
         }
 
         function atualizarTotal() {
-            const total = carrinho.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
-            document.getElementById('totalVisual').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            
-            const barra = document.getElementById('barraCarrinho');
-            if (carrinho.length > 0) {
-                barra.style.display = 'flex';
-            } else {
-                barra.style.display = 'none';
-            }
+            const total = carrinho.reduce((s, p) => s + Number(p.preco) * p.qtd, 0);
+            document.getElementById("totalVisual").innerText = moeda(total);
+            document.getElementById("barraCarrinho").style.display = carrinho.length ? "flex" : "none";
         }
-
-        function abrirModal() {
-            document.getElementById('modalPedido').style.display = 'flex';
-        }
-
-        function fecharModal() {
-            document.getElementById('modalPedido').style.display = 'none';
-        }
+        function abrirModal() { document.getElementById("modalPedido").style.display = "flex"; }
+        function fecharModal() { document.getElementById("modalPedido").style.display = "none"; }
 
         async function confirmarEnviarPedido() {
-            const nome = document.getElementById('nomeCliente').value.trim();
-            if (!nome) {
-                alert("Por favor, digite seu nome ou número da mesa.");
-                return;
-            }
-
+            const nome = document.getElementById("nomeCliente").value.trim();
+            if (!nome) { alert("Por favor, digite seu nome ou número da mesa."); return; }
+            if (!carrinho.length) { alert("Adicione pelo menos um produto."); return; }
+            const botao = document.querySelector("#modalPedido button.btn-finalizar");
+            if (botao.disabled) return;
+            botao.disabled = true; botao.textContent = "ENVIANDO...";
             const dados = {
-                acao: "pedido_cliente",
+                acao: "registrarPedidoQR",
+                pedido_id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("QR-" + Date.now() + "-" + Math.random().toString(16).slice(2)),
                 cliente: nome,
-                formaPagamento: document.getElementById('pagamentoCliente').value,
-                itens: carrinho
+                formaPagamento: document.getElementById("pagamentoCliente").value,
+                itens: carrinho.map(p => ({ produto_id: p.produto_id, quantidade: p.qtd }))
             };
-
             try {
-                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-                alert("Pedido enviado para o balcão com sucesso! 🥤");
-                carrinho = [];
-                fecharModal();
-                renderizarProdutos('todas');
-            } catch (e) {
-                alert("Erro de conexão ao enviar pedido.");
-            }
+                const resp = await fetch(URL_APPS_SCRIPT, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(dados) });
+                if (!resp.ok) throw new Error("Falha na comunicação com o servidor.");
+                const json = await resp.json();
+                if (!json.sucesso) throw new Error(json.mensagem || "Não foi possível registrar o pedido.");
+                const id = json.dados && json.dados.pedido_id ? json.dados.pedido_id : dados.pedido_id;
+                alert("Pedido " + id + " enviado ao balcão! Aguarde a confirmação do atendente. 🥤");
+                carrinho = []; document.getElementById("nomeCliente").value = ""; fecharModal(); renderizarProdutos("todas");
+            } catch (erro) { alert("Não foi possível confirmar o envio: " + erro.message + ". O pedido pode não ter sido registrado; consulte o atendente antes de tentar novamente."); }
+            finally { botao.disabled = false; botao.textContent = "CONFIRMAR E ENVIAR"; }
         }
 
-        function filtrarCategoria(cat) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            renderizarProdutos(cat);
-        }
-
-        window.onload = () => renderizarProdutos('todas');
+        function filtrarCategoria(cat) { renderizarProdutos(cat); }
+        window.addEventListener("DOMContentLoaded", carregarProdutos);
     </script>
 </body>
 </html>
