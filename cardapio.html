@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,42 +9,34 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         body { background: #15251a; padding-bottom: 110px; color: #fdfbf7; }
         
-        /* Cabeçalho Estilo Mini Site / Bio */
         .header { background: linear-gradient(135deg, #1b3022 0%, #101e14 100%); color: #d4af37; text-align: center; padding: 35px 20px 25px 20px; border-bottom: 2px solid #d4af37; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .header h1 { font-size: 26px; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
         .header p { font-size: 13px; font-style: italic; color: #e8e2cd; max-width: 400px; margin: 0 auto; line-height: 1.4; }
 
-        /* Categorias em Estilo de Pílulas / Botões Modernos */
         .categorias-wrapper { background: #1b3022; padding: 12px 10px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(212,175,55,0.3); backdrop-filter: blur(10px); }
         .categorias { display: flex; overflow-x: auto; gap: 10px; max-width: 500px; margin: 0 auto; scrollbar-width: none; }
         .cat-btn { background: #26422f; color: #fdfbf7; border: 1px solid #d4af37; padding: 9px 20px; border-radius: 25px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.3s ease; }
         .cat-btn.active { background: #d4af37; color: #15251a; box-shadow: 0 0 12px rgba(212,175,55,0.5); transform: translateY(-1px); }
 
-        /* Lista de Produtos */
         .container { padding: 20px 15px; max-width: 500px; margin: 0 auto; }
-        
         .secao-titulo { font-size: 16px; color: #d4af37; margin: 20px 0 12px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #d4af37; padding-left: 8px; }
 
         .card-produto { background: #1f3827; border: 1.5px solid rgba(212,175,55,0.4); border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s; }
         .card-produto:hover { border-color: #d4af37; transform: translateY(-2px); }
-        
         .prod-info h3 { font-size: 16px; color: #fdfbf7; font-weight: 700; margin-bottom: 4px; }
         .prod-info p { font-size: 15px; color: #d4af37; font-weight: 800; }
-        
+
         .acoes-qtd { display: flex; align-items: center; gap: 8px; background: #15251a; padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3); }
         .btn-add { background: #d4af37; color: #15251a; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: 800; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-add:active { transform: scale(0.9); }
         .btn-menos { background: #8b3a3a; color: #fff; }
         .qtd-texto { font-weight: 800; font-size: 16px; color: #fdfbf7; min-width: 20px; text-align: center; }
-
         .btn-adicionar-simples { background: #d4af37; color: #15251a; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; }
 
-        /* Barra Fixa do Carrinho (Rodapé) */
         .bar-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(27, 48, 34, 0.95); backdrop-filter: blur(12px); border-top: 2px solid #d4af37; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto; box-shadow: 0 -6px 25px rgba(0,0,0,0.6); z-index: 100; }
         .total-carrinho { font-size: 18px; font-weight: 800; color: #d4af37; }
         .btn-finalizar { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #15251a; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
-        
-        /* Modal de Confirmação */
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
         .modal-content { background: #1f3827; border: 2px solid #d4af37; padding: 25px; border-radius: 18px; max-width: 400px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.7); color: #fdfbf7; }
         .modal-content h2 { color: #d4af37; margin-bottom: 15px; font-size: 20px; text-align: center; }
