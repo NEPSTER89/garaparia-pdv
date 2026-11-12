@@ -1,329 +1,1307 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDV & Balcão - Emunáh Garaparia</title>
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        body { background: #1b3022; padding: 15px; color: #333; }
-        
-        .container { max-width: 550px; margin: 0 auto; background: #fdfbf7; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #d4af37; }
-        
-        .logo-area { text-align: center; margin-bottom: 15px; }
-        h1 { color: #1b3022; font-size: 22px; font-weight: 800; }
-        .subtitle { color: #b8860b; font-size: 11px; margin-top: 2px; font-style: italic; font-weight: 600; }
-        
-        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #e8e2cd; padding: 4px; border-radius: 10px; border: 1.5px solid #d4af37; }
-        .tab { flex: 1; padding: 9px 4px; text-align: center; cursor: pointer; font-weight: 700; color: #1b3022; background: transparent; border-radius: 8px; font-size: 12px; transition: all 0.3s ease; }
-        .tab.active { background: #1b3022; color: #d4af37; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173d32">
+<title>EMUNÁH PDV</title>
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 700; margin-bottom: 6px; color: #1b3022; font-size: 12px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 12px; border: 1.5px solid #d4af37; border-radius: 10px; font-size: 14px; background: #fff; color: #333; outline: none; }
+<style>
+:root {
+  --verde:#173d32;
+  --verde2:#245440;
+  --dourado:#d4af37;
+  --fundo:#f3f5f1;
+  --branco:#fff;
+  --texto:#25352d;
+  --cinza:#738078;
+  --borda:#e0e7e1;
+  --vermelho:#b74343;
+  --amarelo:#f5e8bd;
+}
 
-        .btn { width: 100%; padding: 14px; background: #1b3022; color: #d4af37; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 5px; border: 1px solid #d4af37; }
-        .btn-gasto { background: #8b3a3a; color: white; border-color: #a04040; }
-        
-        .card-pedido { background: #fff; border: 2px solid #d4af37; border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card-pedido h3 { color: #1b3022; font-size: 16px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: flex; justify-content: space-between; }
-        .card-pedido p { font-size: 13px; color: #444; margin-bottom: 4px; }
-        .btn-concluir { background: #2c4c32; color: #d4af37; border: none; padding: 10px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 10px; width: 100%; }
+* {box-sizing:border-box;margin:0;padding:0}
 
-        .qr-box { text-align: center; background: #fff; padding: 15px; border-radius: 12px; border: 1px dashed #d4af37; }
-        .qr-box img { max-width: 160px; height: auto; margin: 10px 0; border: 3px solid #fdfbf7; }
-        .qr-link { font-size: 11px; color: #1b3022; word-break: break-all; background: #f4edd3; padding: 6px; border-radius: 6px; display: inline-block; margin-top: 6px; font-weight: 600; }
+body {
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--fundo);
+  color:var(--texto);
+}
 
-        .loading { display: none; text-align: center; font-weight: bold; color: #d4af37; margin-top: 10px; background: #1b3022; padding: 10px; border-radius: 8px; font-size: 13px; }
-    </style>
+button,input,select {
+  font:inherit;
+}
+
+button {cursor:pointer}
+
+.layout {
+  min-height:100vh;
+  display:flex;
+}
+
+.sidebar {
+  width:245px;
+  background:var(--verde);
+  color:white;
+  padding:25px 16px;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+}
+
+.logo {
+  text-align:center;
+  padding:12px 5px 30px;
+  border-bottom:1px solid #ffffff25;
+}
+
+.logo h1 {
+  color:var(--dourado);
+  font-size:24px;
+  letter-spacing:1px;
+}
+
+.logo p {
+  font-size:11px;
+  color:#d8e2db;
+  margin-top:7px;
+}
+
+.menu {
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.menu button {
+  border:0;
+  background:transparent;
+  color:#e2e9e4;
+  padding:14px;
+  text-align:left;
+  border-radius:9px;
+  font-weight:bold;
+}
+
+.menu button.active,
+.menu button:hover {
+  background:var(--dourado);
+  color:var(--verde);
+}
+
+.sidebar-footer {
+  margin-top:auto;
+  padding:15px 5px 0;
+  color:#bdcfc3;
+  font-size:11px;
+  text-align:center;
+}
+
+.main {
+  flex:1;
+  min-width:0;
+  padding:28px;
+}
+
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.topbar h2 {
+  color:var(--verde);
+  font-size:25px;
+}
+
+.topbar p {
+  color:var(--cinza);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.status {
+  background:#e0eee4;
+  color:#24613b;
+  border-radius:20px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.status.offline {
+  background:#f8e4e1;
+  color:#a33a32;
+}
+
+.secao {display:none}
+.secao.active {display:block}
+
+.cards {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  margin-bottom:25px;
+}
+
+.card {
+  background:white;
+  border:1px solid var(--borda);
+  border-radius:13px;
+  padding:21px;
+  box-shadow:0 3px 12px #193d3210;
+}
+
+.card small {
+  display:block;
+  color:var(--cinza);
+  font-weight:bold;
+  font-size:12px;
+}
+
+.card strong {
+  display:block;
+  color:var(--verde);
+  font-size:28px;
+  margin-top:10px;
+}
+
+.panel {
+  background:white;
+  border:1px solid var(--borda);
+  border-radius:13px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:0 3px 12px #193d3209;
+}
+
+.panel-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.panel-header h3 {
+  color:var(--verde);
+  font-size:17px;
+}
+
+.btn {
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.btn-primary {
+  background:var(--verde);
+  color:var(--dourado);
+}
+
+.btn-primary:hover {background:var(--verde2)}
+
+.btn-secondary {
+  background:#e9eee9;
+  color:var(--verde);
+}
+
+.btn-danger {
+  background:#f8e5e3;
+  color:var(--vermelho);
+}
+
+.btn-small {
+  padding:7px 10px;
+  font-size:11px;
+}
+
+.toolbar {
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.toolbar input,
+.toolbar select {
+  flex:1;
+  min-width:160px;
+}
+
+input,select {
+  width:100%;
+  border:1px solid #ccd7ce;
+  border-radius:8px;
+  padding:12px;
+  outline:none;
+  background:white;
+  color:var(--texto);
+}
+
+input:focus,select:focus {
+  border-color:var(--dourado);
+  box-shadow:0 0 0 2px #d4af3720;
+}
+
+.form-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
+.form-group label {
+  display:block;
+  color:var(--verde);
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.form-group.full {grid-column:1/-1}
+
+.form-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:22px;
+  flex-wrap:wrap;
+}
+
+.checkbox-line {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  background:#f4f7f3;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.checkbox-line input {
+  width:18px;
+  height:18px;
+  accent-color:var(--verde);
+}
+
+.table-wrap {
+  width:100%;
+  overflow-x:auto;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th {
+  background:#edf2ed;
+  color:var(--verde);
+  text-align:left;
+  padding:13px 10px;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+td {
+  padding:13px 10px;
+  border-bottom:1px solid var(--borda);
+  font-size:13px;
+}
+
+.badge {
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.badge-ativo {
+  background:#e0f1e4;
+  color:#28643b;
+}
+
+.badge-inativo {
+  background:#f6e2df;
+  color:#a13c35;
+}
+
+.acoes {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.empty {
+  text-align:center;
+  padding:35px 15px;
+  color:var(--cinza);
+  font-size:13px;
+}
+
+.empty strong {
+  display:block;
+  font-size:15px;
+  color:var(--verde);
+  margin-bottom:8px;
+}
+
+.loading {
+  text-align:center;
+  padding:25px;
+  color:var(--cinza);
+  font-size:13px;
+}
+
+.message {
+  display:none;
+  padding:13px;
+  border-radius:8px;
+  margin-bottom:15px;
+  font-size:13px;
+}
+
+.message.success {
+  display:block;
+  background:#e0f1e4;
+  color:#28643b;
+}
+
+.message.error {
+  display:block;
+  background:#f8e5e3;
+  color:#a13a32;
+}
+
+.notice {
+  background:#fff8e4;
+  border:1px solid #efdfaa;
+  border-radius:9px;
+  padding:13px;
+  font-size:12px;
+  color:#715d24;
+  margin-top:15px;
+  line-height:1.5;
+}
+
+.mobile-menu {
+  display:none;
+  background:var(--verde);
+  color:var(--dourado);
+  border:0;
+  padding:10px 13px;
+  border-radius:8px;
+  font-size:19px;
+}
+
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:10;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.open {display:flex}
+
+.modal-content {
+  background:white;
+  width:100%;
+  max-width:650px;
+  max-height:92vh;
+  overflow:auto;
+  border-radius:15px;
+  padding:25px;
+}
+
+.modal-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.modal-title h3 {color:var(--verde)}
+
+.close {
+  border:0;
+  background:#edf1ed;
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  font-size:19px;
+}
+
+@media(max-width:850px) {
+  .sidebar {
+    width:205px;
+  }
+
+  .main {padding:20px}
+}
+
+@media(max-width:650px) {
+  .layout {display:block}
+
+  .sidebar {
+    display:none;
+    width:100%;
+    padding:15px;
+  }
+
+  .sidebar.mobile-open {display:block}
+
+  .logo {padding:5px 5px 15px}
+
+  .menu {
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .menu button {padding:12px;font-size:12px}
+
+  .main {padding:16px}
+
+  .topbar {align-items:flex-start}
+
+  .topbar h2 {font-size:20px}
+
+  .mobile-menu {display:block}
+
+  .cards {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+
+  .card {padding:15px}
+
+  .card strong {font-size:23px}
+
+  .panel {padding:15px}
+
+  .panel-header {
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .panel-header .btn {width:100%}
+
+  .form-grid {grid-template-columns:1fr}
+
+  .form-group.full {grid-column:auto}
+
+  .form-actions {
+    flex-direction:column-reverse;
+  }
+
+  .form-actions button {width:100%}
+
+  .status {font-size:10px;padding:7px 9px}
+}
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <div class="logo-area">
-            <h1>🥤 EMUNÁH PDV</h1>
-            <div class="subtitle">Painel de Controle e Atendimento</div>
-        </div>
+<div class="layout">
 
-        <div class="tabs">
-            <div class="tab active" onclick="mudarAba('venda')">Venda Balcão</div>
-            <div class="tab" onclick="mudarAba('pedidos')">🔔 Pedidos</div>
-            <div class="tab" onclick="mudarAba('gasto')">Gastos</div>
-            <div class="tab" onclick="mudarAba('qrcode')">QR Cardápio</div>
-        </div>
-
-        <!-- Venda Balcão -->
-        <div id="secao-venda">
-            <div class="form-group">
-                <label>Selecionar Produto:</label>
-                <select id="produto">
-                    <option value="Garapa Natural 500ml" data-preco="7.00" data-custo="2.20">Garapa Natural 500ml - R$ 7,00</option>
-                    <option value="Garapa Natural 1L" data-preco="12.00" data-custo="4.00">Garapa Natural 1 Litro - R$ 12,00</option>
-                    <option value="Garapa com Limão" data-preco="8.00" data-custo="2.50">Garapa com Limão - R$ 8,00</option>
-                    <option value="Garapa com Abacaxi" data-preco="9.00" data-custo="3.00">Garapa com Abacaxi - R$ 9,00</option>
-                    <option value="Garapa com Morango" data-preco="10.00" data-custo="3.50">Garapa com Morango - R$ 10,00</option>
-                    <option value="Garapa com Maracujá" data-preco="10.00" data-custo="3.50">Garapa com Maracujá - R$ 10,00</option>
-                    <option value="Pastel" data-preco="8.00" data-custo="3.20">Pastel - R$ 8,00</option>
-                    <option value="Pamonha" data-preco="10.00" data-custo="4.50">Pamonha - R$ 10,00</option>
-                    <option value="Água de Côco" data-preco="6.00" data-custo="2.50">Água de Côco - R$ 6,00</option>
-                    <option value="Água Mineral" data-preco="4.00" data-custo="1.80">Água Mineral - R$ 4,00</option>
-                    <option value="Refrigerante" data-preco="6.00" data-custo="3.00">Refrigerante - R$ 6,00</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Quantidade:</label>
-                <input type="number" id="qtd" value="1" min="1">
-            </div>
-
-            <div class="form-group">
-                <label>Forma de Pagamento:</label>
-                <select id="pagamentoVenda">
-                    <option value="PIX">PIX</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="Cartão">Cartão</option>
-                </select>
-            </div>
-
-            <button class="btn" onclick="enviarVenda()">REGISTRAR VENDA</button>
-        </div>
-
-        <!-- Tela de Pedidos dos Clientes -->
-        <div id="secao-pedidos" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 style="font-size: 14px; color: #1b3022;">Pedidos Chegando:</h3>
-                <button onclick="carregarPedidos()" style="background: #d4af37; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">🔄 Atualizar</button>
-            </div>
-            <div id="listaPedidosBalcao">
-                <p style="text-align: center; color: #666; font-size: 13px; padding: 20px;">Clique em atualizar para ver os pedidos.</p>
-            </div>
-        </div>
-
-        <!-- Lançar Gasto -->
-        <div id="secao-gasto" style="display: none;">
-            <div class="form-group">
-                <label>Categoria:</label>
-                <select id="categoriaGasto">
-                    <option value="Insumos">Insumos (Cana, Frutas, Copos)</option>
-                    <option value="Gelo">Gelo</option>
-                    <option value="Manutenção">Manutenção / Equipamentos</option>
-                    <option value="Despesas Fixas">Aluguel / Água / Luz</option>
-                    <option value="Outros">Outros</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Descrição:</label>
-                <input type="text" id="descricaoGasto" placeholder="Ex: Compra de gelo">
-            </div>
-            <div class="form-group">
-                <label>Valor (R$):</label>
-                <input type="number" id="valorGasto" step="0.01" placeholder="0.00">
-            </div>
-            <div class="form-group">
-                <label>Forma de Pagamento:</label>
-                <select id="pagamentoGasto">
-                    <option value="PIX">PIX</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="Cartão">Cartão</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Comprovante (Foto):</label>
-                <input type="file" id="fotoComprovante" accept="image/*" capture="camera">
-            </div>
-            <button class="btn btn-gasto" onclick="enviarGasto()">REGISTRAR GASTO</button>
-        </div>
-
-        <!-- QR Code -->
-        <div id="secao-qrcode" style="display: none; text-align: center;">
-            <p style="font-size: 12px; color: #1b3022; margin-bottom: 8px; font-weight: 600;">QR Code do Cardápio Digital:</p>
-            <div class="qr-box">
-                <div id="qrCodeContainer"></div>
-                <div class="qr-link" id="linkCardapioTexto"></div>
-            </div>
-            <button class="btn" style="margin-top: 12px; background: #b8860b;" onclick="copiarLinkCardapio()">Copiar Link</button>
-        </div>
-
-        <div id="loading" class="loading">Processando... Aguarde.</div>
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <h1>🥤 EMUNÁH</h1>
+      <p>PDV · GARAPARIA</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    <script>
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
+    <nav class="menu">
+      <button class="active" onclick="abrirSecao('inicio',this)">⌂ Início</button>
+      <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
+      <button onclick="futuraFuncao('Vendas')">▣ Vendas</button>
+      <button onclick="futuraFuncao('Pedidos')">♧ Pedidos</button>
+      <button onclick="futuraFuncao('Estoque')">▤ Estoque</button>
+      <button onclick="futuraFuncao('Caixa')">＄ Caixa</button>
+      <button onclick="futuraFuncao('Relatórios')">▥ Relatórios</button>
+      <button onclick="futuraFuncao('Configurações')">⚙ Configurações</button>
+    </nav>
 
-        const urlCardapio = window.location.href.replace('index.html', '').replace(/[\/]+$/, '') + '/cardapio.html';
-        document.getElementById('linkCardapioTexto').innerText = urlCardapio;
-        try {
-            var qr = qrcode(0, 'M');
-            qr.addData(urlCardapio);
-            qr.make();
-            document.getElementById('qrCodeContainer').innerHTML = qr.createImgTag(4, 5);
-        } catch(e) {}
+    <div class="sidebar-footer">
+      EMUNÁH PDV<br>
+      Sistema de gestão
+    </div>
+  </aside>
 
-        function copiarLinkCardapio() {
-            navigator.clipboard.writeText(urlCardapio);
-            alert("Link copiado!");
-        }
+  <main class="main">
 
-        function mudarAba(aba) {
-            document.getElementById('secao-venda').style.display = (aba === 'venda') ? 'block' : 'none';
-            document.getElementById('secao-pedidos').style.display = (aba === 'pedidos') ? 'block' : 'none';
-            document.getElementById('secao-gasto').style.display = (aba === 'gasto') ? 'block' : 'none';
-            document.getElementById('secao-qrcode').style.display = (aba === 'qrcode') ? 'block' : 'none';
-            
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach((t, i) => {
-                t.classList.toggle('active', (i === 0 && aba === 'venda') || (i === 1 && aba === 'pedidos') || (i === 2 && aba === 'gasto') || (i === 3 && aba === 'qrcode'));
-            });
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+        <div>
+          <h2 id="tituloPagina">Visão geral</h2>
+          <p id="subtituloPagina">Painel de controle da garaparia</p>
+        </div>
+      </div>
+      <div id="statusConexao" class="status">● Conectando...</div>
+    </header>
 
-            if(aba === 'pedidos') {
-                carregarPedidos();
-            }
-        }
+    <div id="mensagem" class="message"></div>
 
-        async function carregarPedidos() {
-            const container = document.getElementById('listaPedidosBalcao');
-            container.innerHTML = '<p style="text-align: center; color: #666; padding: 15px;">Buscando pedidos...</p>';
-            
-            try {
-                const res = await fetch(URL_APPS_SCRIPT);
-                const pedidos = await res.json();
-                
-                container.innerHTML = "";
-                if (!pedidos || pedidos.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 15px;">Nenhum pedido pendente.</p>';
-                    return;
-                }
+    <!-- INÍCIO -->
+    <section id="secao-inicio" class="secao active">
 
-                pedidos.reverse().forEach((p, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'card-pedido';
-                    card.innerHTML = `
-                        <h3><span>📋 Pedido</span> <span style="font-size: 12px; color: #b8860b;">R$ ${Number(p.total).toFixed(2).replace('.', ',')}</span></h3>
-                        <p><strong>Item:</strong> ${p.produto}</p>
-                        <p><strong>Qtd:</strong> ${p.qtd} | <strong>Pagamento:</strong> ${p.pagamento}</p>
-                        <p style="font-size: 11px; color: #886; margin-top: 4px;">Horário: ${new Date(p.dataHora).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                        <button class="btn-concluir" onclick='concluirEBaixarEstoque(${JSON.stringify(p)}, this)'>✔️ Concluir / Baixar no Caixa e Estoque</button>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch(e) {
-                container.innerHTML = '<p style="text-align: center; color: #8b3a3a; padding: 15px;">Erro ao carregar pedidos.</p>';
-            }
-        }
+      <div class="cards">
+        <div class="card">
+          <small>PRODUTOS CADASTRADOS</small>
+          <strong id="totalProdutos">0</strong>
+        </div>
 
-        async function concluirEBaixarEstoque(pedido, botaoElemento) {
-            if (!confirm(`Confirmar conclusão do pedido de ${pedido.produto} (Qtd: ${pedido.qtd})? Isso atualizará o caixa e o estoque.`)) {
-                return;
-            }
+        <div class="card">
+          <small>PRODUTOS ATIVOS</small>
+          <strong id="produtosAtivos">0</strong>
+        </div>
 
-            botaoElemento.innerText = "Processando baixa...";
-            botaoElemento.disabled = true;
+        <div class="card">
+          <small>PRODUTOS INATIVOS</small>
+          <strong id="produtosInativos">0</strong>
+        </div>
+      </div>
 
-            const dados = {
-                acao: "concluir_pedido",
-                pagamento: pedido.pagamento,
-                itens: [
-                    {
-                        nome: pedido.produto,
-                        qtd: pedido.qtd,
-                        preco: Number(pedido.total) / Number(pedido.qtd),
-                        custo: 2.00 // Custo base estimado ou ajustável
-                    }
-                ]
-            };
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Bem-vindo ao EMUNÁH PDV</h3>
+          <button class="btn btn-primary" onclick="abrirCadastro()">
+            + Cadastrar produto
+          </button>
+        </div>
 
-            try {
-                await fetch(URL_APPS_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(dados)
-                });
+        <p style="font-size:14px;line-height:1.7;color:#68766d">
+          O sistema está começando com o catálogo vazio.
+          Cadastre os produtos para começar a montar o cardápio
+          e preparar as operações de venda.
+        </p>
 
-                alert("Pedido concluído! Caixa atualizado e estoque baixado com sucesso.");
-                botaoElemento.parentElement.remove(); // Remove o card da tela
-            } catch (e) {
-                alert("Erro ao processar baixa: " + e);
-                botaoElemento.innerText = "✔️ Concluir / Baixar no Caixa e Estoque";
-                botaoElemento.disabled = false;
-            }
-        }
+        <div class="notice">
+          <strong>Banco de dados:</strong> as informações dos produtos
+          são consultadas e armazenadas na planilha Google.
+          Não existem produtos de demonstração neste sistema.
+        </div>
+      </div>
 
-        async function enviarVenda() {
-            const selectProd = document.getElementById('produto');
-            const option = selectProd.options[selectProd.selectedIndex];
-            const dados = {
-                acao: "venda",
-                produto: option.value,
-                qtd: document.getElementById('qtd').value,
-                valorUnitario: option.getAttribute('data-preco'),
-                custoUnitario: option.getAttribute('data-custo'),
-                formaPagamento: document.getElementById('pagamentoVenda').value
-            };
-            mostrarCarregamento(true);
-            try {
-                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-                alert("Venda registrada e estoque baixado com sucesso!");
-                document.getElementById('qtd').value = "1";
-            } catch (e) {
-                alert("Erro de conexão.");
-            } finally {
-                mostrarCarregamento(false);
-            }
-        }
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Produtos recentes</h3>
+          <button class="btn btn-secondary" onclick="abrirSecao('produtos')">
+            Ver todos
+          </button>
+        </div>
+        <div id="produtosRecentes" class="empty">
+          Nenhum produto cadastrado.
+        </div>
+      </div>
 
-        async function enviarGasto() {
-            const fileInput = document.getElementById('fotoComprovante');
-            let base64File = "", nomeArquivo = "";
-            mostrarCarregamento(true);
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                nomeArquivo = `gasto_${new Date().getTime()}.jpg`;
-                base64File = await comprimirEConverterBase64(file);
-            }
-            const dados = {
-                acao: "gasto",
-                categoria: document.getElementById('categoriaGasto').value,
-                descricao: document.getElementById('descricaoGasto').value,
-                valor: document.getElementById('valorGasto').value,
-                formaPagamento: document.getElementById('pagamentoGasto').value,
-                arquivoBase64: base64File,
-                nomeArquivo: nomeArquivo
-            };
-            try {
-                await fetch(URL_APPS_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-                alert("Gasto registrado!");
-                document.getElementById('descricaoGasto').value = "";
-                document.getElementById('valorGasto').value = "";
-                fileInput.value = "";
-            } catch (e) {
-                alert("Erro de conexão.");
-            } finally {
-                mostrarCarregamento(false);
-            }
-        }
+    </section>
 
-        function comprimirEConverterBase64(arquivo) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(arquivo);
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let largura = img.width, altura = img.height;
-                        const maximo = 800;
-                        if (largura > maximo) { altura = (maximo / largura) * altura; largura = maximo; }
-                        canvas.width = largura; canvas.height = altura;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, largura, altura);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7));
-                    };
-                };
-            });
-        }
-    </script>
+    <!-- PRODUTOS -->
+    <section id="secao-produtos" class="secao">
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Gerenciamento de produtos</h3>
+          <button class="btn btn-primary" onclick="abrirCadastro()">
+            + Novo produto
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <input
+            id="buscaProduto"
+            type="search"
+            placeholder="Pesquisar produto..."
+            oninput="renderizarProdutos()"
+          >
+
+          <select id="filtroStatus" onchange="renderizarProdutos()">
+            <option value="TODOS">Todos os produtos</option>
+            <option value="ATIVOS">Somente ativos</option>
+            <option value="INATIVOS">Somente inativos</option>
+          </select>
+
+          <button class="btn btn-secondary" onclick="carregarProdutos()">
+            ↻ Atualizar
+          </button>
+        </div>
+
+        <div id="listaProdutos" class="loading">
+          Carregando produtos...
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL DE PRODUTO -->
+<div class="modal" id="modalProduto">
+  <div class="modal-content">
+
+    <div class="modal-title">
+      <h3 id="tituloModal">Cadastrar produto</h3>
+      <button class="close" onclick="fecharModal()">×</button>
+    </div>
+
+    <form id="formProduto" onsubmit="salvarFormulario(event)">
+
+      <input type="hidden" id="produtoId">
+
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label for="nome">Nome do produto *</label>
+          <input id="nome" required maxlength="150"
+            placeholder="Digite o nome do produto">
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoria *</label>
+          <input id="categoria" required maxlength="80"
+            placeholder="Ex.: Garapas, Bebidas, Salgados">
+        </div>
+
+        <div class="form-group">
+          <label for="preco">Preço de venda (R$) *</label>
+          <input id="preco" type="number" min="0" step="0.01"
+            required placeholder="0,00">
+        </div>
+
+        <div class="form-group">
+          <label for="custo">Custo unitário (R$)</label>
+          <input id="custo" type="number" min="0" step="0.01"
+            value="0" placeholder="0,00">
+        </div>
+
+        <div class="form-group">
+          <label for="estoqueMinimo">Estoque mínimo</label>
+          <input id="estoqueMinimo" type="number" min="0" step="1"
+            value="0">
+        </div>
+
+        <div class="form-group full">
+          <label class="checkbox-line">
+            <input id="controlarEstoque" type="checkbox">
+            Controlar estoque deste produto
+          </label>
+        </div>
+
+        <div class="form-group full">
+          <label class="checkbox-line">
+            <input id="ativo" type="checkbox" checked>
+            Produto ativo e disponível para operação
+          </label>
+        </div>
+
+      </div>
+
+      <div class="notice">
+        O estoque inicial será zero. Entradas e saídas de estoque
+        serão feitas pelo módulo de estoque, com histórico de movimentações.
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary"
+          onclick="fecharModal()">Cancelar</button>
+
+        <button type="submit" class="btn btn-primary" id="btnSalvar">
+          Salvar produto
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+
+// ======================================================
+// CONFIGURAÇÃO DA API
+// ======================================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
+
+let produtos = [];
+let carregando = false;
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  carregarProdutos();
+});
+
+// ======================================================
+// COMUNICAÇÃO COM APPS SCRIPT
+// ======================================================
+
+async function requisicaoGET(acao) {
+  const url = API_URL + "?acao=" + encodeURIComponent(acao);
+
+  const resposta = await fetch(url, {
+    method: "GET",
+    redirect: "follow"
+  });
+
+  if (!resposta.ok) {
+    throw new Error("Falha na comunicação com o servidor.");
+  }
+
+  return await resposta.json();
+}
+
+async function requisicaoPOST(dados) {
+  const resposta = await fetch(API_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(dados)
+  });
+
+  if (!resposta.ok) {
+    throw new Error("Falha ao enviar os dados.");
+  }
+
+  return await resposta.json();
+}
+
+// ======================================================
+// CARREGAR PRODUTOS
+// ======================================================
+
+async function carregarProdutos() {
+
+  if (carregando) return;
+
+  carregando = true;
+
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = '<div class="loading">Consultando banco de dados...</div>';
+
+  try {
+
+    const resposta = await requisicaoGET("listarProdutos");
+
+    if (!resposta.sucesso) {
+      throw new Error(resposta.mensagem || "Não foi possível consultar produtos.");
+    }
+
+    produtos = Array.isArray(resposta.dados)
+      ? resposta.dados
+      : [];
+
+    atualizarDashboard();
+    renderizarProdutos();
+    atualizarRecentes();
+    atualizarStatus(true);
+
+  } catch (erro) {
+
+    lista.innerHTML = `
+      <div class="empty">
+        <strong>Não foi possível carregar os produtos.</strong>
+        ${escaparHTML(erro.message)}
+        <br><br>
+        Verifique a implantação e a conexão com o Apps Script.
+      </div>
+    `;
+
+    atualizarStatus(false);
+    mostrarMensagem(erro.message, "error");
+
+  } finally {
+    carregando = false;
+  }
+}
+
+// ======================================================
+// DASHBOARD
+// ======================================================
+
+function atualizarDashboard() {
+
+  const ativos = produtos.filter(p => p.ativo === true);
+  const inativos = produtos.filter(p => p.ativo !== true);
+
+  document.getElementById("totalProdutos").textContent =
+    produtos.length;
+
+  document.getElementById("produtosAtivos").textContent =
+    ativos.length;
+
+  document.getElementById("produtosInativos").textContent =
+    inativos.length;
+}
+
+// ======================================================
+// LISTAGEM E PESQUISA
+// ======================================================
+
+function renderizarProdutos() {
+
+  const container = document.getElementById("listaProdutos");
+
+  const busca = document
+    .getElementById("buscaProduto")
+    .value.toLowerCase()
+    .trim();
+
+  const filtro = document.getElementById("filtroStatus").value;
+
+  let lista = produtos.filter(p => {
+
+    const correspondeBusca =
+      p.nome.toLowerCase().includes(busca) ||
+      p.categoria.toLowerCase().includes(busca);
+
+    const correspondeStatus =
+      filtro === "TODOS" ||
+      (filtro === "ATIVOS" && p.ativo) ||
+      (filtro === "INATIVOS" && !p.ativo);
+
+    return correspondeBusca && correspondeStatus;
+  });
+
+  if (!lista.length) {
+
+    container.innerHTML = `
+      <div class="empty">
+        <strong>Nenhum produto encontrado.</strong>
+        Cadastre um produto ou altere os filtros.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Custo</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lista.map(p => `
+            <tr>
+              <td><strong>${escaparHTML(p.nome)}</strong></td>
+              <td>${escaparHTML(p.categoria)}</td>
+              <td>${formatarMoeda(p.preco_venda)}</td>
+              <td>${formatarMoeda(p.custo_unitario)}</td>
+              <td>
+                <span class="badge ${p.ativo ? "badge-ativo" : "badge-inativo"}">
+                  ${p.ativo ? "ATIVO" : "INATIVO"}
+                </span>
+              </td>
+              <td>
+                <div class="acoes">
+                  <button class="btn btn-secondary btn-small"
+                    onclick="editarProduto('${escaparAtributo(p.produto_id)}')">
+                    Editar
+                  </button>
+
+                  <button class="btn ${p.ativo ? "btn-danger" : "btn-primary"} btn-small"
+                    onclick="alternarStatus('${escaparAtributo(p.produto_id)}',${!p.ativo})">
+                    ${p.ativo ? "Desativar" : "Ativar"}
+                  </button>
+
+                  <button class="btn btn-danger btn-small"
+                    onclick="removerProduto('${escaparAtributo(p.produto_id)}')">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ======================================================
+// PRODUTOS RECENTES
+// ======================================================
+
+function atualizarRecentes() {
+
+  const container = document.getElementById("produtosRecentes");
+
+  if (!produtos.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <strong>Seu catálogo está vazio.</strong>
+        Comece cadastrando o primeiro produto.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = produtos
+    .slice(-5)
+    .reverse()
+    .map(p => `
+      <div style="padding:12px 0;border-bottom:1px solid #e0e7e1;
+                  display:flex;justify-content:space-between;gap:10px">
+        <div>
+          <strong style="font-size:13px">${escaparHTML(p.nome)}</strong>
+          <div style="font-size:11px;color:#738078;margin-top:4px">
+            ${escaparHTML(p.categoria)}
+          </div>
+        </div>
+        <strong style="color:#173d32">
+          ${formatarMoeda(p.preco_venda)}
+        </strong>
+      </div>
+    `).join("");
+}
+
+// ======================================================
+// ABRIR CADASTRO
+// ======================================================
+
+function abrirCadastro() {
+
+  document.getElementById("formProduto").reset();
+
+  document.getElementById("produtoId").value = "";
+  document.getElementById("custo").value = "0";
+  document.getElementById("estoqueMinimo").value = "0";
+  document.getElementById("ativo").checked = true;
+  document.getElementById("controlarEstoque").checked = false;
+
+  document.getElementById("tituloModal").textContent =
+    "Cadastrar produto";
+
+  document.getElementById("btnSalvar").textContent =
+    "Cadastrar produto";
+
+  document.getElementById("modalProduto").classList.add("open");
+}
+
+// ======================================================
+// EDITAR PRODUTO
+// ======================================================
+
+function editarProduto(id) {
+
+  const p = produtos.find(
+    item => String(item.produto_id) === String(id)
+  );
+
+  if (!p) {
+    mostrarMensagem("Produto não encontrado.", "error");
+    return;
+  }
+
+  document.getElementById("produtoId").value = p.produto_id;
+  document.getElementById("nome").value = p.nome;
+  document.getElementById("categoria").value = p.categoria;
+  document.getElementById("preco").value = p.preco_venda;
+  document.getElementById("custo").value = p.custo_unitario;
+  document.getElementById("estoqueMinimo").value = p.estoque_minimo;
+  document.getElementById("ativo").checked = p.ativo;
+  document.getElementById("controlarEstoque").checked =
+    p.controlar_estoque;
+
+  document.getElementById("tituloModal").textContent =
+    "Editar produto";
+
+  document.getElementById("btnSalvar").textContent =
+    "Salvar alterações";
+
+  document.getElementById("modalProduto").classList.add("open");
+}
+
+// ======================================================
+// SALVAR CADASTRO OU EDIÇÃO
+// ======================================================
+
+async function salvarFormulario(event) {
+
+  event.preventDefault();
+
+  const botao = document.getElementById("btnSalvar");
+
+  const produto = {
+    produto_id: document.getElementById("produtoId").value,
+    nome: document.getElementById("nome").value.trim(),
+    categoria: document.getElementById("categoria").value.trim(),
+    preco_venda: Number(document.getElementById("preco").value),
+    custo_unitario: Number(document.getElementById("custo").value || 0),
+    estoque_minimo: Number(document.getElementById("estoqueMinimo").value || 0),
+    ativo: document.getElementById("ativo").checked,
+    controlar_estoque: document.getElementById("controlarEstoque").checked,
+
+    // Estoque inicial permanece zerado.
+    // O estoque será gerenciado pelo módulo próprio.
+    estoque_atual: 0
+  };
+
+  if (!produto.nome || !produto.categoria) {
+    mostrarMensagem("Preencha nome e categoria.", "error");
+    return;
+  }
+
+  if (produto.preco_venda < 0 || !Number.isFinite(produto.preco_venda)) {
+    mostrarMensagem("Informe um preço válido.", "error");
+    return;
+  }
+
+  botao.disabled = true;
+  botao.textContent = "Salvando...";
+
+  try {
+
+    const resposta = await requisicaoPOST({
+      acao: "salvarProduto",
+      produto: produto
+    });
+
+    if (!resposta.sucesso) {
+      throw new Error(resposta.mensagem || "Erro ao salvar produto.");
+    }
+
+    fecharModal();
+
+    mostrarMensagem(resposta.mensagem, "success");
+
+    await carregarProdutos();
+
+  } catch (erro) {
+
+    mostrarMensagem(erro.message, "error");
+
+  } finally {
+
+    botao.disabled = false;
+    botao.textContent = produto.produto_id
+      ? "Salvar alterações"
+      : "Cadastrar produto";
+  }
+}
+
+// ======================================================
+// ATIVAR / DESATIVAR
+// ======================================================
+
+async function alternarStatus(id, ativo) {
+
+  const p = produtos.find(
+    item => String(item.produto_id) === String(id)
+  );
+
+  if (!p) return;
+
+  const acao = ativo ? "ativar" : "desativar";
+
+  if (!confirm(`Deseja ${acao} o produto "${p.nome}"?`)) {
+    return;
+  }
+
+  try {
+
+    const resposta = await requisicaoPOST({
+      acao: "alterarStatusProduto",
+      produto_id: id,
+      ativo: ativo
+    });
+
+    if (!resposta.sucesso) {
+      throw new Error(resposta.mensagem);
+    }
+
+    mostrarMensagem(resposta.mensagem, "success");
+    await carregarProdutos();
+
+  } catch (erro) {
+    mostrarMensagem(erro.message, "error");
+  }
+}
+
+// ======================================================
+// EXCLUIR PRODUTO
+// ======================================================
+
+async function removerProduto(id) {
+
+  const p = produtos.find(
+    item => String(item.produto_id) === String(id)
+  );
+
+  if (!p) return;
+
+  const confirmar = confirm(
+    `Deseja excluir "${p.nome}"?\n\n` +
+    "Se houver histórico de pedidos ou movimentações, " +
+    "o produto será desativado para preservar o histórico."
+  );
+
+  if (!confirmar) return;
+
+  try {
+
+    const resposta = await requisicaoPOST({
+      acao: "excluirProduto",
+      produto_id: id
+    });
+
+    if (!resposta.sucesso) {
+      throw new Error(resposta.mensagem);
+    }
+
+    mostrarMensagem(resposta.mensagem, "success");
+    await carregarProdutos();
+
+  } catch (erro) {
+    mostrarMensagem(erro.message, "error");
+  }
+}
+
+// ======================================================
+// NAVEGAÇÃO
+// ======================================================
+
+function abrirSecao(secao, botao) {
+
+  document.querySelectorAll(".secao").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  document.getElementById("secao-" + secao)
+    .classList.add("active");
+
+  document.querySelectorAll(".menu button").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  if (botao) botao.classList.add("active");
+
+  const titulos = {
+    inicio: ["Visão geral", "Painel de controle da garaparia"],
+    produtos: ["Produtos", "Gerenciamento do catálogo"]
+  };
+
+  document.getElementById("tituloPagina").textContent =
+    titulos[secao][0];
+
+  document.getElementById("subtituloPagina").textContent =
+    titulos[secao][1];
+
+  document.getElementById("sidebar").classList.remove("mobile-open");
+}
+
+function toggleMenu() {
+  document.getElementById("sidebar")
+    .classList.toggle("mobile-open");
+}
+
+function futuraFuncao(nome) {
+  mostrarMensagem(
+    "O módulo de " + nome +
+    " será integrado na próxima etapa.",
+    "success"
+  );
+}
+
+// ======================================================
+// MODAL
+// ======================================================
+
+function fecharModal() {
+  document.getElementById("modalProduto")
+    .classList.remove("open");
+}
+
+document.getElementById("modalProduto")
+  .addEventListener("click", function(event) {
+    if (event.target === this) fecharModal();
+  });
+
+// ======================================================
+// STATUS E MENSAGENS
+// ======================================================
+
+function atualizarStatus(online) {
+
+  const elemento = document.getElementById("statusConexao");
+
+  elemento.textContent = online
+    ? "● Banco conectado"
+    : "● Sem conexão";
+
+  elemento.classList.toggle("offline", !online);
+}
+
+function mostrarMensagem(texto, tipo) {
+
+  const elemento = document.getElementById("mensagem");
+
+  elemento.textContent = texto;
+  elemento.className = "message " + tipo;
+
+  window.clearTimeout(mostrarMensagem.timer);
+
+  mostrarMensagem.timer = window.setTimeout(() => {
+    elemento.style.display = "none";
+  }, 5000);
+
+  elemento.style.display = "block";
+}
+
+// ======================================================
+// FORMATAÇÃO
+// ======================================================
+
+function formatarMoeda(valor) {
+
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
+function escaparHTML(valor) {
+
+  return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[caractere]);
+}
+
+function escaparAtributo(valor) {
+  return escaparHTML(valor);
+}
+
+</script>
+
 </body>
 </html>
