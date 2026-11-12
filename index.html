@@ -509,6 +509,22 @@ td {
 
   .status {font-size:10px;padding:7px 9px}
 }
+
+/* MÓDULO DE VENDAS */
+.venda-grid {display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.9fr);gap:18px}
+.produto-venda-lista {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.produto-venda {border:1px solid var(--borda);border-radius:10px;padding:13px;background:#fff;text-align:left;color:var(--texto)}
+.produto-venda:hover {border-color:var(--dourado);background:#fffdf5}
+.produto-venda strong {display:block;color:var(--verde);font-size:14px}
+.produto-venda span {display:block;color:var(--cinza);font-size:12px;margin-top:6px}
+.carrinho-linha {display:grid;grid-template-columns:1fr 75px 85px 30px;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid var(--borda);font-size:12px}
+.carrinho-linha input {padding:8px;text-align:center}
+.total-venda {font-size:25px;font-weight:bold;color:var(--verde);text-align:right}
+.pagamento-linha {display:grid;grid-template-columns:1fr 120px 32px;gap:7px;margin-bottom:8px;align-items:center}
+.pagamento-linha select,.pagamento-linha input {padding:9px;font-size:12px}
+@media(max-width:900px){.venda-grid{grid-template-columns:1fr}}
+@media(max-width:450px){.produto-venda-lista{grid-template-columns:1fr}.carrinho-linha{grid-template-columns:1fr 62px 75px 25px}.pagamento-linha{grid-template-columns:1fr 100px 28px}}
+
 </style>
 </head>
 
@@ -525,7 +541,7 @@ td {
     <nav class="menu">
       <button class="active" onclick="abrirSecao('inicio',this)">⌂ Início</button>
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
-      <button onclick="futuraFuncao('Vendas')">▣ Vendas</button>
+      <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
       <button onclick="futuraFuncao('Pedidos')">♧ Pedidos</button>
       <button onclick="futuraFuncao('Estoque')">▤ Estoque</button>
       <button onclick="futuraFuncao('Caixa')">＄ Caixa</button>
@@ -644,6 +660,49 @@ td {
         </div>
       </div>
 
+
+    </section>
+
+    <!-- VENDAS -->
+    <section id="secao-vendas" class="secao">
+      <div class="venda-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Produtos disponíveis</h3>
+            <button class="btn btn-secondary" onclick="carregarProdutosVenda()">↻ Atualizar</button>
+          </div>
+          <input id="buscaVenda" type="search" placeholder="Pesquisar produto..." oninput="renderizarCatalogoVenda()" style="margin-bottom:14px">
+          <div id="catalogoVenda" class="produto-venda-lista">
+            <div class="empty">Carregando produtos...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>🛒 Venda atual</h3></div>
+          <div class="form-group">
+            <label for="clienteVenda">Cliente / Mesa (opcional)</label>
+            <input id="clienteVenda" maxlength="150" placeholder="Ex.: Balcão, João, Mesa 02">
+          </div>
+          <div id="carrinhoVenda"><div class="empty">Selecione produtos para iniciar a venda.</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid var(--borda);margin-top:12px">
+            <strong>Total</strong><div class="total-venda" id="totalVenda">R$ 0,00</div>
+          </div>
+          <div class="form-group">
+            <label>Formas de pagamento</label>
+            <div id="listaPagamentos"></div>
+            <button type="button" class="btn btn-secondary btn-small" onclick="adicionarPagamento()">+ Adicionar forma de pagamento</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0">
+            <span>Total pago</span><strong id="totalPago">R$ 0,00</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0">
+            <span>Restante</span><strong id="restantePagamento">R$ 0,00</strong>
+          </div>
+          <button class="btn btn-primary" id="btnFinalizarVenda" style="width:100%;margin-top:12px" onclick="finalizarVenda()">✓ Finalizar venda</button>
+          <button class="btn btn-secondary" style="width:100%;margin-top:8px" onclick="limparVenda()">Limpar venda</button>
+          <div class="notice">Os preços são confirmados pelo servidor. Produtos com controle de estoque terão baixa automática somente após a venda ser validada e registrada.</div>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -739,6 +798,8 @@ const API_URL =
 
 let produtos = [];
 let carregando = false;
+let carrinhoVenda = [];
+let pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
 
 // ======================================================
 // INICIALIZAÇÃO
@@ -746,6 +807,7 @@ let carregando = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarProdutos();
+  renderizarPagamentos();
 });
 
 // ======================================================
@@ -1204,7 +1266,8 @@ function abrirSecao(secao, botao) {
 
   const titulos = {
     inicio: ["Visão geral", "Painel de controle da garaparia"],
-    produtos: ["Produtos", "Gerenciamento do catálogo"]
+    produtos: ["Produtos", "Gerenciamento do catálogo"],
+    vendas: ["Vendas", "PDV · Registro de vendas e pagamentos"]
   };
 
   document.getElementById("tituloPagina").textContent =
@@ -1214,6 +1277,7 @@ function abrirSecao(secao, botao) {
     titulos[secao][1];
 
   document.getElementById("sidebar").classList.remove("mobile-open");
+  if (secao === "vendas") carregarProdutosVenda();
 }
 
 function toggleMenu() {
@@ -1299,6 +1363,189 @@ function escaparHTML(valor) {
 
 function escaparAtributo(valor) {
   return escaparHTML(valor);
+}
+
+
+
+// ======================================================
+// MÓDULO DE VENDAS
+// ======================================================
+
+function carregarProdutosVenda() {
+  const ativos = produtos.filter(p => p.ativo === true);
+  if (!ativos.length) {
+    document.getElementById("catalogoVenda").innerHTML =
+      '<div class="empty">Nenhum produto ativo cadastrado.</div>';
+    return;
+  }
+  renderizarCatalogoVenda();
+}
+
+function renderizarCatalogoVenda() {
+  const termo = (document.getElementById("buscaVenda")?.value || "").toLowerCase().trim();
+  const lista = produtos.filter(p => p.ativo === true &&
+    (String(p.nome).toLowerCase().includes(termo) ||
+     String(p.categoria).toLowerCase().includes(termo)));
+  const container = document.getElementById("catalogoVenda");
+  if (!container) return;
+  if (!lista.length) {
+    container.innerHTML = '<div class="empty">Nenhum produto encontrado.</div>';
+    return;
+  }
+  container.innerHTML = lista.map(p => `
+    <button type="button" class="produto-venda" onclick="adicionarAoCarrinho('${escaparAtributo(p.produto_id)}')">
+      <strong>${escaparHTML(p.nome)}</strong>
+      <span>${escaparHTML(p.categoria)} · ${formatarMoeda(p.preco_venda)}</span>
+      ${p.controlar_estoque ? `<span>Estoque: ${Number(p.estoque_atual || 0)}</span>` : ""}
+    </button>
+  `).join("");
+}
+
+function adicionarAoCarrinho(id) {
+  const p = produtos.find(x => String(x.produto_id) === String(id));
+  if (!p || !p.ativo) return;
+  const existente = carrinhoVenda.find(x => x.produto_id === id);
+  if (existente) existente.quantidade += 1;
+  else carrinhoVenda.push({produto_id:id,nome:p.nome,preco:Number(p.preco_venda),quantidade:1});
+  renderizarCarrinho();
+}
+
+function alterarQuantidadeVenda(id, valor) {
+  const item = carrinhoVenda.find(x => x.produto_id === id);
+  if (!item) return;
+  const qtd = Math.floor(Number(valor));
+  if (!Number.isFinite(qtd) || qtd < 1) {
+    carrinhoVenda = carrinhoVenda.filter(x => x.produto_id !== id);
+  } else item.quantidade = qtd;
+  renderizarCarrinho();
+}
+
+function removerDoCarrinho(id) {
+  carrinhoVenda = carrinhoVenda.filter(x => x.produto_id !== id);
+  renderizarCarrinho();
+}
+
+function totalCarrinhoVenda() {
+  return Math.round(carrinhoVenda.reduce((s,x) => s + x.preco*x.quantidade,0)*100)/100;
+}
+
+function renderizarCarrinho() {
+  const container = document.getElementById("carrinhoVenda");
+  if (!carrinhoVenda.length) {
+    container.innerHTML = '<div class="empty">Selecione produtos para iniciar a venda.</div>';
+  } else {
+    container.innerHTML = carrinhoVenda.map(x => `
+      <div class="carrinho-linha">
+        <div><strong>${escaparHTML(x.nome)}</strong><div style="color:#738078">${formatarMoeda(x.preco)} un.</div></div>
+        <input type="number" min="1" step="1" value="${x.quantidade}" onchange="alterarQuantidadeVenda('${escaparAtributo(x.produto_id)}',this.value)">
+        <strong>${formatarMoeda(x.preco*x.quantidade)}</strong>
+        <button class="btn btn-danger btn-small" title="Remover" onclick="removerDoCarrinho('${escaparAtributo(x.produto_id)}')">×</button>
+      </div>
+    `).join("");
+  }
+  document.getElementById("totalVenda").textContent = formatarMoeda(totalCarrinhoVenda());
+  atualizarResumoPagamentos();
+}
+
+function adicionarPagamento() {
+  pagamentosVenda.push({forma:"PIX",valor:""});
+  renderizarPagamentos();
+}
+
+function removerPagamento(indice) {
+  if (pagamentosVenda.length <= 1) return;
+  pagamentosVenda.splice(indice,1);
+  renderizarPagamentos();
+}
+
+function renderizarPagamentos() {
+  const container = document.getElementById("listaPagamentos");
+  if (!container) return;
+  container.innerHTML = pagamentosVenda.map((p,i) => `
+    <div class="pagamento-linha">
+      <select onchange="pagamentosVenda[${i}].forma=this.value">
+        <option value="DINHEIRO" ${p.forma==="DINHEIRO"?"selected":""}>Dinheiro</option>
+        <option value="PIX" ${p.forma==="PIX"?"selected":""}>Pix</option>
+        <option value="CARTÃO DE DÉBITO" ${p.forma==="CARTÃO DE DÉBITO"?"selected":""}>Cartão de débito</option>
+        <option value="CARTÃO DE CRÉDITO" ${p.forma==="CARTÃO DE CRÉDITO"?"selected":""}>Cartão de crédito</option>
+      </select>
+      <input type="number" min="0.01" step="0.01" placeholder="R$ valor" value="${p.valor}" oninput="pagamentosVenda[${i}].valor=this.value;atualizarResumoPagamentos()">
+      <button type="button" class="btn btn-danger btn-small" onclick="removerPagamento(${i})" ${pagamentosVenda.length===1?"disabled":""}>×</button>
+    </div>
+  `).join("");
+  atualizarResumoPagamentos();
+}
+
+function atualizarResumoPagamentos() {
+  const total = totalCarrinhoVenda();
+  const pago = Math.round(pagamentosVenda.reduce((s,p)=>s+(Number(p.valor)||0),0)*100)/100;
+  document.getElementById("totalPago").textContent = formatarMoeda(pago);
+  const restante = Math.round((total-pago)*100)/100;
+  const el = document.getElementById("restantePagamento");
+  el.textContent = formatarMoeda(restante);
+  el.style.color = Math.abs(restante)<0.01 ? "#28643b" : "#b74343";
+}
+
+function limparVenda() {
+  if (carrinhoVenda.length && !confirm("Deseja limpar os itens e pagamentos desta venda?")) return;
+  carrinhoVenda = [];
+  pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
+  document.getElementById("clienteVenda").value = "";
+  renderizarCarrinho();
+  renderizarPagamentos();
+}
+
+async function finalizarVenda() {
+  if (!carrinhoVenda.length) {
+    mostrarMensagem("Adicione produtos antes de finalizar.", "error");
+    return;
+  }
+  const total = totalCarrinhoVenda();
+  const pagamentos = pagamentosVenda.map(p=>({forma:p.forma,valor:Math.round(Number(p.valor)*100)/100}));
+  if (pagamentos.some(p=>!Number.isFinite(p.valor)||p.valor<=0)) {
+    mostrarMensagem("Informe um valor válido para cada forma de pagamento.", "error");
+    return;
+  }
+  const soma = Math.round(pagamentos.reduce((s,p)=>s+p.valor,0)*100)/100;
+  if (Math.abs(soma-total)>0.009) {
+    mostrarMensagem("A soma dos pagamentos precisa ser exatamente igual ao total da venda.", "error");
+    return;
+  }
+  const botao = document.getElementById("btnFinalizarVenda");
+  if (botao.disabled) return;
+  if (!confirm("Confirmar venda de " + formatarMoeda(total) + "?")) return;
+
+  botao.disabled = true;
+  botao.textContent = "Registrando venda...";
+  const dados = {
+    acao:"registrarVenda",
+    pedido_id:(window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("PDV-"+Date.now()+"-"+Math.random().toString(16).slice(2)),
+    origem:"BALCAO",
+    cliente_mesa:document.getElementById("clienteVenda").value.trim() || "Balcão",
+    itens:carrinhoVenda.map(x=>({produto_id:x.produto_id,quantidade:x.quantidade})),
+    pagamentos:pagamentos
+  };
+  try {
+    const resposta = await requisicaoPOST(dados);
+    if (!resposta.sucesso) throw new Error(resposta.mensagem || "Não foi possível registrar a venda.");
+    const numero = resposta.dados?.pedido_id || dados.pedido_id;
+    limparVendaSemConfirmar();
+    await carregarProdutos();
+    renderizarPagamentos();
+    mostrarMensagem("Venda " + numero + " registrada! Total: " + formatarMoeda(total), "success");
+  } catch (erro) {
+    mostrarMensagem(erro.message, "error");
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "✓ Finalizar venda";
+  }
+}
+
+function limparVendaSemConfirmar() {
+  carrinhoVenda = [];
+  pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
+  document.getElementById("clienteVenda").value = "";
+  renderizarCarrinho();
 }
 
 </script>
