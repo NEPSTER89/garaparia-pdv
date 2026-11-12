@@ -800,6 +800,7 @@ let produtos = [];
 let carregando = false;
 let carrinhoVenda = [];
 let pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
+let adminPinEmunah = null;
 
 // ======================================================
 // INICIALIZAÇÃO
@@ -830,20 +831,35 @@ async function requisicaoGET(acao) {
 }
 
 async function requisicaoPOST(dados) {
+  const protegido = [
+    "listarProdutos", "salvarProduto", "excluirProduto",
+    "alterarStatusProduto", "registrarVenda", "listarPedidos",
+    "concluirPedido", "alterarStatusPedido", "cancelarPedido",
+    "registrarEntradaEstoque", "listarMovimentacoes", "validarEstrutura"
+  ].includes(dados.acao);
+
+  const payload = { ...dados };
+  if (protegido) {
+    if (!adminPinEmunah) {
+      const pin = window.prompt("Digite o PIN administrativo do EMUNÁH PDV:");
+      if (pin === null || !pin.trim()) throw new Error("Operação cancelada. PIN administrativo não informado.");
+      adminPinEmunah = pin.trim();
+    }
+    payload.admin_pin = adminPinEmunah;
+  }
+
   const resposta = await fetch(API_URL, {
     method: "POST",
     redirect: "follow",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(dados)
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
   });
-
-  if (!resposta.ok) {
-    throw new Error("Falha ao enviar os dados.");
+  if (!resposta.ok) throw new Error("Falha ao enviar os dados.");
+  const resultado = await resposta.json();
+  if (!resultado.sucesso && /não autorizado|PIN|acesso administrativo/i.test(resultado.mensagem || "")) {
+    adminPinEmunah = null;
   }
-
-  return await resposta.json();
+  return resultado;
 }
 
 // ======================================================
@@ -861,7 +877,7 @@ async function carregarProdutos() {
 
   try {
 
-    const resposta = await requisicaoGET("listarProdutos");
+    const resposta = await requisicaoPOST({ acao: "listarProdutos" });
 
     if (!resposta.sucesso) {
       throw new Error(resposta.mensagem || "Não foi possível consultar produtos.");
