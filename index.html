@@ -545,7 +545,12 @@ td {
 @media(max-width:900px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.main{padding:15px}.module-grid{grid-template-columns:1fr}.inline-form{grid-template-columns:1fr}.inline-form .full{grid-column:auto}.cards{grid-template-columns:1fr}}
 
+
+.qr-box canvas,.qr-box img{max-width:100%;height:auto}
+.status-pendente{background:#fff1c7;color:#795b08}.status-preparacao{background:#dcecff;color:#20558a}.status-concluido{background:#e0f1e4;color:#28643b}.status-cancelado{background:#f8e5e3;color:#a33a32}
+
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -563,6 +568,7 @@ td {
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
       <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
       <button onclick="abrirSecao('pedidos',this)">♧ Pedidos</button>
+      <button onclick="abrirSecao('qrcode',this)">▦ Cardápio / QR Code</button>
       <button onclick="abrirSecao('estoque',this)">▤ Estoque</button>
       <button onclick="abrirSecao('caixa',this)">＄ Caixa</button>
       <button onclick="abrirSecao('relatorios',this)">▥ Relatórios</button>
@@ -619,15 +625,13 @@ td {
         </div>
 
         <p style="font-size:14px;line-height:1.7;color:#68766d">
-          O sistema está começando com o catálogo vazio.
-          Cadastre os produtos para começar a montar o cardápio
-          e preparar as operações de venda.
+          Os produtos cadastrados na planilha são carregados automaticamente. Utilize o menu para registrar vendas, acompanhar pedidos QR, controlar o estoque e consultar o caixa.
         </p>
 
         <div class="notice">
           <strong>Banco de dados:</strong> as informações dos produtos
           são consultadas e armazenadas na planilha Google.
-          Não existem produtos de demonstração neste sistema.
+          Os dados são consultados diretamente na planilha Google.
         </div>
       </div>
 
@@ -774,6 +778,21 @@ td {
       <div class="panel"><div class="panel-header"><h3>Vendas por forma de pagamento</h3></div><div id="relPorForma"></div></div>
       <div class="panel"><div class="panel-header"><h3>Itens vendidos</h3></div><div id="relListaVendas"></div></div>
     </section>
+    <section id="secao-qrcode" class="secao">
+      <div class="panel">
+        <div class="panel-header"><h3>Cardápio digital para clientes</h3><button class="btn btn-secondary" onclick="gerarQRCode()">↻ Atualizar QR Code</button></div>
+        <p style="font-size:13px;line-height:1.6;margin-bottom:15px">O cliente aponta a câmera do celular para o QR Code, abre o cardápio, escolhe os produtos e envia o pedido diretamente para a tela Pedidos do PDV.</p>
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+          <div id="qrcode" style="background:#fff;padding:14px;border:1px solid var(--borda);border-radius:12px;min-width:230px;min-height:230px;display:flex;align-items:center;justify-content:center"><span class="empty">Gerando QR Code...</span></div>
+          <div style="flex:1;min-width:240px">
+            <div class="form-group"><label>Endereço público do cardápio</label><input id="linkCardapio" readonly></div>
+            <div class="form-actions" style="justify-content:flex-start"><button class="btn btn-primary" onclick="copiarLinkCardapio()">Copiar link</button><button class="btn btn-secondary" onclick="baixarQRCode()">Baixar QR Code</button><button class="btn btn-secondary" onclick="abrirCardapioPublico()">Abrir cardápio</button></div>
+            <div class="notice">Importante: publique também o arquivo <strong>cardapio.html</strong> na raiz do mesmo repositório GitHub Pages. O QR Code aponta para esse endereço.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="secao-configuracoes" class="secao">
       <div class="panel"><div class="panel-header"><h3>Diagnóstico do sistema</h3><button class="btn btn-primary" onclick="validarSistema()">Verificar agora</button></div><div id="diagnosticoSistema" class="empty">Clique em verificar para testar servidor e planilha.</div></div>
       <div class="panel"><h3 style="margin-bottom:12px">Integrações</h3><p style="font-size:13px;line-height:1.8">Aplicação: EMUNÁH PDV<br>Banco: Google Sheets<br>Servidor: Google Apps Script<br>Moeda: BRL<br>Fuso: America/Sao_Paulo<br>Acesso: sem PIN.</p></div>
@@ -937,7 +956,7 @@ async function carregarProdutos() {
     }
 
     produtos = Array.isArray(resposta.dados)
-      ? resposta.dados
+      ? resposta.dados.map(p => ({...p, ativo: p.ativo === true || String(p.ativo).toUpperCase() === "TRUE", controlar_estoque: p.controlar_estoque === true || String(p.controlar_estoque).toUpperCase() === "TRUE", preco_venda:Number(p.preco_venda)||0, custo_unitario:Number(p.custo_unitario)||0, estoque_atual:Number(p.estoque_atual)||0, estoque_minimo:Number(p.estoque_minimo)||0}))
       : [];
 
     atualizarDashboard();
@@ -1339,6 +1358,7 @@ function abrirSecao(secao, botao) {
     produtos:["Produtos","Gerenciamento do catálogo"],
     vendas:["Vendas","PDV · Registro de vendas e pagamentos"],
     pedidos:["Pedidos","Acompanhe e conclua pedidos QR"],
+    qrcode:["Cardápio Digital / QR Code","Compartilhe o cardápio com seus clientes"],
     estoque:["Estoque","Entradas, saídas e posição atual"],
     caixa:["Caixa","Entradas, saídas e lançamentos"],
     relatorios:["Relatórios","Resumo de vendas e movimentações"],
@@ -1349,6 +1369,7 @@ function abrirSecao(secao, botao) {
   document.getElementById("sidebar").classList.remove("mobile-open");
   if(secao==="vendas")carregarProdutosVenda();
   if(secao==="pedidos")carregarPedidos();
+  if(secao==="qrcode")gerarQRCode();
   if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();}
   if(secao==="caixa")carregarCaixa();
   if(secao==="relatorios")carregarRelatorios();
@@ -1617,6 +1638,51 @@ function limparVendaSemConfirmar() {
   document.getElementById("clienteVenda").value = "";
   renderizarCarrinho();
 }
+
+
+// ======================================================
+// PEDIDOS QR
+// ======================================================
+function dataHoraBR(v){try{return new Date(v).toLocaleString("pt-BR")}catch(e){return String(v||"")}}
+function classeStatus(s){return ({PENDENTE:"status-pendente",EM_PREPARACAO:"status-preparacao",CONCLUIDO:"status-concluido",CANCELADO:"status-cancelado"})[s]||""}
+async function carregarPedidos(){
+ const box=document.getElementById("listaPedidos"); if(!box)return; box.innerHTML='<div class="loading">Consultando pedidos...</div>';
+ try{const r=await requisicaoPOST({acao:"listarPedidos",status:document.getElementById("filtroPedidos")?.value||""});if(!r.sucesso)throw new Error(r.mensagem);const pedidos=r.dados||[];
+ if(!pedidos.length){box.innerHTML='<div class="empty">Nenhum pedido encontrado para este filtro.</div>';return;}
+ box.innerHTML='<div class="table-wrap"><table><thead><tr><th>Pedido / Data</th><th>Cliente / Mesa</th><th>Itens</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+pedidos.map(p=>`<tr><td><strong>${escaparHTML(p.pedido_id)}</strong><br>${dataHoraBR(p.data_hora)}</td><td>${escaparHTML(p.cliente_mesa||"")}<br><small>${escaparHTML(p.origem||"")}</small></td><td>${(p.itens||[]).map(i=>`${escaparHTML(i.produto)} × ${Number(i.quantidade)||0}`).join("<br>")}</td><td><strong>${formatarMoeda(p.total)}</strong></td><td><span class="badge ${classeStatus(p.status)}">${escaparHTML(p.status)}</span></td><td><div class="acoes">${p.status==="PENDENTE"?`<button class="btn btn-secondary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','EM_PREPARACAO')">Preparar</button>`:""}${p.status==="EM_PREPARACAO"||p.status==="PENDENTE"?`<button class="btn btn-primary btn-small" onclick="concluirPedidoQR('${escaparAtributo(p.pedido_id)}',${Number(p.total)||0})">Concluir</button><button class="btn btn-danger btn-small" onclick="cancelarPedidoQR('${escaparAtributo(p.pedido_id)}')">Cancelar</button>`:""}</div></td></tr>`).join("")+'</tbody></table></div>';
+ }catch(e){box.innerHTML=`<div class="empty">${escaparHTML(e.message)}</div>`;mostrarMensagem(e.message,"error");}
+}
+async function mudarStatusPedido(id,status){try{const r=await requisicaoPOST({acao:"alterarStatusPedido",pedido_id:id,status});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,"success");carregarPedidos();}catch(e){mostrarMensagem(e.message,"error")}}
+async function cancelarPedidoQR(id){if(!confirm("Confirma o cancelamento deste pedido?"))return;mudarStatusPedido(id,"CANCELADO")}
+async function concluirPedidoQR(id,total){const forma=prompt("Forma de pagamento (PIX, DINHEIRO, CARTÃO DE DÉBITO ou CARTÃO DE CRÉDITO):","PIX");if(!forma)return;try{const r=await requisicaoPOST({acao:"concluirPedido",pedido_id:id,pagamentos:[{forma:forma.toUpperCase(),valor:Number(total)}],responsavel:"Atendente"});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,"success");await carregarPedidos();await carregarProdutos();}catch(e){mostrarMensagem(e.message,"error")}}
+
+// ======================================================
+// ESTOQUE
+// ======================================================
+function renderizarEstoque(){
+ const controlados=produtos.filter(p=>p.controlar_estoque);document.getElementById("estoqueControlados").textContent=controlados.length;document.getElementById("estoqueBaixo").textContent=controlados.filter(p=>p.estoque_atual<=p.estoque_minimo).length;document.getElementById("estoqueUnidades").textContent=controlados.reduce((s,p)=>s+p.estoque_atual,0);
+ const sel=document.getElementById("estoqueProduto");if(sel){const atual=sel.value;sel.innerHTML=produtos.map(p=>`<option value="${escaparAtributo(p.produto_id)}">${escaparHTML(p.nome)} (${p.estoque_atual})</option>`).join("");if(atual)sel.value=atual;}
+ const box=document.getElementById("tabelaEstoque");if(box)box.innerHTML='<div class="table-wrap"><table><thead><tr><th>Produto</th><th>Controlar</th><th>Atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody>'+produtos.map(p=>`<tr><td>${escaparHTML(p.nome)}</td><td>${p.controlar_estoque?"Sim":"Não"}</td><td>${p.estoque_atual}</td><td>${p.estoque_minimo}</td><td>${p.controlar_estoque&&p.estoque_atual<=p.estoque_minimo?'<span class="badge status-pendente">Estoque baixo</span>':'<span class="badge badge-ativo">Normal</span>'}</td></tr>`).join("")+'</tbody></table></div>';
+}
+async function registrarMovimentacaoEstoque(e){e.preventDefault();const d={acao:"registrarMovimentacaoEstoque",produto_id:document.getElementById("estoqueProduto").value,tipo:document.getElementById("estoqueTipo").value,quantidade:Number(document.getElementById("estoqueQuantidade").value),custo_unitario:Number(document.getElementById("estoqueCusto").value||0),motivo:document.getElementById("estoqueMotivo").value};try{const r=await requisicaoPOST(d);if(!r.sucesso)throw new Error(r.mensagem);e.target.reset();mostrarMensagem(r.mensagem,"success");await carregarProdutos();renderizarEstoque();carregarMovimentacoes();}catch(err){mostrarMensagem(err.message,"error")}}
+async function carregarMovimentacoes(){const box=document.getElementById("listaMovimentacoes");if(!box)return;try{const r=await requisicaoPOST({acao:"listarMovimentacoes",limite:100});if(!r.sucesso)throw new Error(r.mensagem);const a=r.dados||[];box.innerHTML=a.length?'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd.</th><th>Motivo</th></tr></thead><tbody>'+a.map(x=>`<tr><td>${dataHoraBR(x.data_hora)}</td><td>${escaparHTML(x.produto)}</td><td>${escaparHTML(x.tipo_movimento)}</td><td>${x.quantidade}</td><td>${escaparHTML(x.motivo)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">Nenhuma movimentação registrada.</div>';}catch(e){box.innerHTML=`<div class="empty">${escaparHTML(e.message)}</div>`}}
+
+// ======================================================
+// CAIXA E RELATÓRIOS
+// ======================================================
+async function registrarLancamento(e){e.preventDefault();const d={acao:"registrarLancamentoCaixa",tipo:document.getElementById("caixaTipo").value,valor:Number(document.getElementById("caixaValor").value),descricao:document.getElementById("caixaDescricao").value,forma_pagamento:document.getElementById("caixaForma").value,responsavel:"Administrador"};try{const r=await requisicaoPOST(d);if(!r.sucesso)throw new Error(r.mensagem);e.target.reset();mostrarMensagem(r.mensagem,"success");carregarCaixa();}catch(err){mostrarMensagem(err.message,"error")}}
+async function carregarCaixa(){const box=document.getElementById("listaCaixa");if(!box)return;box.innerHTML='<div class="loading">Carregando caixa...</div>';try{const r=await requisicaoPOST({acao:"listarCaixa",limite:300});if(!r.sucesso)throw new Error(r.mensagem);const a=r.dados||[];const ent=a.filter(x=>x.tipo==="ENTRADA").reduce((s,x)=>s+Number(x.valor||0),0),sai=a.filter(x=>x.tipo==="SAIDA").reduce((s,x)=>s+Number(x.valor||0),0);document.getElementById("caixaEntradas").textContent=formatarMoeda(ent);document.getElementById("caixaSaidas").textContent=formatarMoeda(sai);document.getElementById("caixaSaldo").textContent=formatarMoeda(ent-sai);box.innerHTML=a.length?'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Forma</th><th>Valor</th></tr></thead><tbody>'+a.map(x=>`<tr><td>${dataHoraBR(x.data_hora)}</td><td>${escaparHTML(x.tipo)}</td><td>${escaparHTML(x.descricao)}</td><td>${escaparHTML(x.forma_pagamento)}</td><td>${formatarMoeda(x.valor)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">Nenhum lançamento encontrado.</div>';}catch(e){box.innerHTML=`<div class="empty">${escaparHTML(e.message)}</div>`}}
+async function carregarRelatorios(){const box=document.getElementById("relListaVendas");try{const r=await requisicaoPOST({acao:"relatorioPeriodo",inicio:document.getElementById("relatorioInicio").value,fim:document.getElementById("relatorioFim").value});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};document.getElementById("relVendas").textContent=formatarMoeda(d.vendas||0);document.getElementById("relPedidos").textContent=d.pedidos||0;document.getElementById("relItens").textContent=d.itens||0;document.getElementById("relEntradas").textContent=formatarMoeda(d.entradas||0);document.getElementById("relSaidas").textContent=formatarMoeda(d.saidas||0);document.getElementById("relSaldo").textContent=formatarMoeda((d.entradas||0)-(d.saidas||0));document.getElementById("relPorForma").innerHTML=Object.keys(d.porForma||{}).length?Object.entries(d.porForma).map(([k,v])=>`<p style="padding:8px 0;border-bottom:1px solid var(--borda)">${escaparHTML(k)}: <strong>${formatarMoeda(v)}</strong></p>`).join(""):'<div class="empty">Sem pagamentos no período.</div>';box.innerHTML=d.itensDetalhados?.length?'<div class="table-wrap"><table><thead><tr><th>Produto</th><th>Quantidade</th><th>Total</th></tr></thead><tbody>'+d.itensDetalhados.map(x=>`<tr><td>${escaparHTML(x.produto)}</td><td>${x.quantidade}</td><td>${formatarMoeda(x.total)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">Sem vendas no período.</div>';}catch(e){mostrarMensagem(e.message,"error");box.innerHTML=`<div class="empty">${escaparHTML(e.message)}</div>`}}
+async function validarSistema(){const box=document.getElementById("diagnosticoSistema");if(!box)return;box.textContent="Verificando servidor e estrutura...";try{const r=await requisicaoPOST({acao:"validarEstrutura"});if(!r.sucesso)throw new Error(r.mensagem);box.innerHTML='<span class="badge badge-ativo">Tudo certo</span><p style="margin-top:10px">Conexão com a planilha e cabeçalhos das abas validados.</p>';atualizarStatus(true);}catch(e){box.textContent=e.message;atualizarStatus(false)}}
+
+// ======================================================
+// CARDÁPIO DIGITAL / QR CODE
+// ======================================================
+const URL_CARDAPIO_PUBLICO="https://nepster89.github.io/garaparia-pdv/cardapio.html";
+function gerarQRCode(){const link=document.getElementById("linkCardapio");if(link)link.value=URL_CARDAPIO_PUBLICO;const box=document.getElementById("qrcode");if(!box)return;box.innerHTML="";if(typeof QRCode==="undefined"){box.innerHTML='<div class="empty">Biblioteca do QR Code não carregou. Verifique a internet e atualize.</div>';return;}new QRCode(box,{text:URL_CARDAPIO_PUBLICO,width:210,height:210,colorDark:"#173d32",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});}
+function copiarLinkCardapio(){const el=document.getElementById("linkCardapio");el.select();el.setSelectionRange(0,99999);navigator.clipboard?.writeText(el.value).then(()=>mostrarMensagem("Link copiado!","success")).catch(()=>{document.execCommand("copy");mostrarMensagem("Link copiado!","success")});}
+function baixarQRCode(){const box=document.getElementById("qrcode"),img=box.querySelector("img"),canvas=box.querySelector("canvas");const url=img?.src||(canvas?canvas.toDataURL("image/png"):"");if(!url){mostrarMensagem("Gere o QR Code antes de baixar.","error");return;}const a=document.createElement("a");a.href=url;a.download="QR-CODE-EMUNAH-CARDAPIO.png";a.click();}
+function abrirCardapioPublico(){window.open(URL_CARDAPIO_PUBLICO,"_blank","noopener");}
 
 </script>
 
