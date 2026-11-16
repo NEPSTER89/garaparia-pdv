@@ -606,6 +606,11 @@ td {
 @media(max-width:850px){.kds-grid{grid-template-columns:1fr}}
 @media print{body *{visibility:hidden!important}#areaImpressao,#areaImpressao *{visibility:visible!important}#areaImpressao{position:absolute;left:0;top:0;width:100%;padding:20px;color:#000;background:#fff}.no-print{display:none!important}}
 
+
+.search-result{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:1px solid var(--borda);background:#fff;border-radius:9px;padding:11px;margin-top:7px;color:var(--texto)}
+.search-result:hover{border-color:var(--dourado);background:#fffdf6}.search-result small{color:var(--cinza)}
+.kds-filtros{margin-top:12px}.kds-filtros button{flex:0 0 auto}
+@media(max-width:650px){.topbar{flex-wrap:wrap}.topbar>div:last-child{width:100%;justify-content:space-between}.kds-filtros button{flex:1 1 42%}}
 </style>
 </head>
 
@@ -623,7 +628,6 @@ td {
       <button class="active" onclick="abrirSecao('inicio',this)">⌂ Início</button>
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
       <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
-      <button onclick="abrirSecao('pedidos',this)">♧ Pedidos</button>
       <button onclick="abrirSecao('cozinha',this)">🍽 Cozinha</button>
       <button onclick="abrirSecao('mesas',this)">▦ Mesas / Comandas</button>
       <button onclick="abrirSecao('estoque',this)">▤ Estoque</button>
@@ -648,7 +652,10 @@ td {
           <p id="subtituloPagina">Painel de controle da garaparia</p>
         </div>
       </div>
-      <div id="statusConexao" class="status">● Conectando...</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-secondary" onclick="abrirBuscaGeral()" title="Busca geral">⌕ Buscar</button>
+        <div id="statusConexao" class="status">● Conectando...</div>
+      </div>
     </header>
 
     <div id="mensagem" class="message"></div>
@@ -697,7 +704,8 @@ td {
         <div class="panel-header"><h3>Lançamento rápido</h3><span class="muted">Acesso direto às operações</span></div>
         <div class="module-grid">
           <button class="btn btn-primary" onclick="abrirSecao('vendas')">＋ Nova venda</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('pedidos')">♧ Pedidos QR</button>
+          <button class="btn btn-secondary" onclick="abrirSecao('cozinha')">🍽 Cozinha</button>
+          <button class="btn btn-secondary" onclick="abrirSecao('mesas')">▦ Mesas abertas</button>
           <button class="btn btn-secondary" onclick="abrirSecao('estoque')">▤ Estoque</button>
           <button class="btn btn-secondary" onclick="abrirSecao('caixa')">＄ Caixa</button>
           <button class="btn btn-secondary" onclick="abrirSecao('produtos')">▦ Produtos</button>
@@ -714,6 +722,9 @@ td {
           <div class="module-card"><small>Produto mais vendido</small><strong id="indTopProduto" style="font-size:16px">—</strong></div>
           <div class="module-card"><small>Entradas / saídas</small><strong id="indMovimento" style="font-size:16px">R$ 0,00 / R$ 0,00</strong></div>
           <div class="module-card"><small>Saldo financeiro</small><strong id="indSaldo">R$ 0,00</strong></div>
+          <div class="module-card"><small>Pedidos aguardando</small><strong id="indAguardando">—</strong></div>
+          <div class="module-card"><small>Mesas ocupadas</small><strong id="indMesasAbertas">—</strong></div>
+          <div class="module-card"><small>Alertas de estoque</small><strong id="indAlertasEstoque">—</strong></div>
         </div>
       </div>
 
@@ -809,24 +820,28 @@ td {
           <div class="notice">Os preços são confirmados pelo servidor. Produtos com controle de estoque terão baixa automática somente após a venda ser validada e registrada.</div>
         </div>
       </div>
-    </section>
-
-
-    <section id="secao-pedidos" class="secao">
-      <div class="panel"><div class="panel-header"><h3>Pedidos recebidos</h3><button class="btn btn-secondary" onclick="carregarPedidos()">↻ Atualizar</button></div>
-        <div class="filters"><select id="filtroPedidos" onchange="carregarPedidos()"><option value="">Todos os status</option><option value="PENDENTE">Pendentes</option><option value="EM_PREPARACAO">Em preparação</option><option value="CONCLUIDO">Concluídos</option><option value="CANCELADO">Cancelados</option></select></div>
-        <div id="listaPedidos"><div class="empty">Carregando pedidos...</div></div>
+      <div class="panel"><div class="panel-header"><h3>Histórico de vendas</h3><button class="btn btn-secondary" onclick="carregarHistoricoVendas()">↻ Consultar</button></div>
+        <div class="filters"><input id="historicoVendaBusca" placeholder="Buscar por descrição, referência ou forma" oninput="filtrarHistoricoVendas()"><input id="historicoVendaData" type="date" onchange="carregarHistoricoVendas()"></div><div id="historicoVendasLista"><div class="empty">Clique em Consultar para carregar as movimentações de vendas.</div></div>
       </div>
-      <div class="panel"><div class="panel-header"><h3>Histórico de cancelamentos</h3><button class="btn btn-secondary" onclick="carregarHistoricoCancelamentos()">↻ Atualizar</button></div><div id="listaCancelamentos"><div class="empty">Carregando histórico...</div></div></div>
     </section>
+
+
     <section id="secao-cozinha" class="secao">
       <div class="panel"><div class="panel-header"><h3>Painel de preparo</h3><div><span class="muted" id="statusCozinha">Atualização automática a cada 5 segundos</span> <button class="btn btn-secondary" onclick="carregarCozinha()">↻ Atualizar</button></div></div>
         <p class="muted" style="margin-bottom:14px">Pedidos do cardápio QR e das mesas. Pedidos são atualizados automaticamente enquanto esta tela estiver aberta.</p>
+        <div class="filters kds-filtros">
+          <button class="btn btn-secondary btn-small" onclick="filtrarCozinha('TODOS')">Todos</button>
+          <button class="btn btn-secondary btn-small" onclick="filtrarCozinha('PENDENTE')">Novos</button>
+          <button class="btn btn-secondary btn-small" onclick="filtrarCozinha('EM_PREPARACAO')">Em preparo</button>
+          <button class="btn btn-secondary btn-small" onclick="filtrarCozinha('ENTREGUE')">Entregues</button>
+          <button class="btn btn-secondary btn-small" onclick="carregarHistoricoCancelamentos();document.getElementById('historicoCancelamentosCozinha').open=true">Histórico de cancelamentos</button>
+        </div>
         <div class="kds-grid">
           <div class="kds-col"><h4>Novos <span id="kdsQtdNovos">0</span></h4><div id="kdsNovos"></div></div>
           <div class="kds-col"><h4>Em preparo <span id="kdsQtdPreparo">0</span></h4><div id="kdsPreparo"></div></div>
           <div class="kds-col"><h4>Entregues <span id="kdsQtdEntregues">0</span></h4><div id="kdsEntregues"></div></div>
         </div>
+        <details id="historicoCancelamentosCozinha" class="panel" style="margin-top:14px"><summary style="cursor:pointer;font-weight:bold;color:var(--verde)">Histórico de cancelamentos</summary><div id="listaCancelamentosCozinha" style="margin-top:12px"><div class="empty">Abra para consultar.</div></div></details>
       </div>
     </section>
 
@@ -902,6 +917,9 @@ td {
 
   </main>
 </div>
+
+<!-- BUSCA GERAL -->
+<div class="modal" id="modalBuscaGeral"><div class="modal-content"><div class="modal-title"><h3>Busca geral</h3><button class="close" onclick="fecharBuscaGeral()">×</button></div><input id="buscaGeralTexto" placeholder="Digite produto, mesa, pedido ou descrição..." oninput="executarBuscaGeral()"><div id="resultadoBuscaGeral" class="empty" style="margin-top:12px">Digite para pesquisar.</div></div></div>
 
 <!-- MODAL DE FECHAMENTO DE COMANDA -->
 <div class="modal" id="modalPagamentoComanda">
@@ -1457,6 +1475,7 @@ async function removerProduto(id) {
 // ======================================================
 
 function abrirSecao(secao, botao) {
+  cacheBuscaGeral=null;
 
   document.querySelectorAll(".secao").forEach(el => {
     el.classList.remove("active");
@@ -1476,7 +1495,7 @@ function abrirSecao(secao, botao) {
     inicio:["Visão geral","Painel de controle da garaparia"],
     produtos:["Produtos","Gerenciamento do catálogo"],
     vendas:["Vendas","PDV · Registro de vendas e pagamentos"],
-    pedidos:["Pedidos","Acompanhe e conclua pedidos QR"],
+    cozinha:["Cozinha","Pedidos recebidos, preparo e entrega"],
     mesas:["Mesas / Comandas","Acompanhe o consumo e feche cada mesa"],
     estoque:["Estoque","Entradas, saídas e posição atual"],
     caixa:["Caixa","Entradas, saídas e lançamentos"],
@@ -1487,8 +1506,8 @@ function abrirSecao(secao, botao) {
   document.getElementById("subtituloPagina").textContent=titulos[secao][1];
   document.getElementById("sidebar").classList.remove("mobile-open");
   if(secao==="vendas")carregarProdutosVenda();
-  if(secao==="pedidos"){carregarPedidos();carregarHistoricoCancelamentos();}
-  if(secao==="cozinha")carregarCozinha();
+  if(secao==="cozinha"){carregarCozinha();carregarHistoricoCancelamentosCozinha();}
+  if(secao==="vendas")carregarHistoricoVendas();
   if(secao==="mesas")carregarMesas();
   if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();carregarEstoqueInteligente();}
   if(secao==="caixa"){carregarCaixa();carregarTurnoCaixa();}
@@ -1783,12 +1802,12 @@ async function carregarPedidos(){
   }catch(e){alvo.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
 }
 async function mudarStatusPedido(id,status){
-  try{const r=await requisicaoPOST({acao:'alterarStatusPedido',pedido_id:id,status});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await carregarPedidos();}
+  try{const r=await requisicaoPOST({acao:'alterarStatusPedido',pedido_id:id,status});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await carregarCozinha();}
   catch(e){mostrarMensagem(e.message,'error');}
 }
 async function concluirPedidoUI(id,forma,total){
   if(!confirm('Confirmar conclusão deste pedido e registrar a venda no caixa e a baixa de estoque?'))return;
-  try{const r=await requisicaoPOST({acao:'concluirPedido',pedido_id:id,pagamentos:[{forma,valor:Number(total)}]});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await Promise.all([carregarPedidos(),carregarProdutos()]);}
+  try{const r=await requisicaoPOST({acao:'concluirPedido',pedido_id:id,pagamentos:[{forma,valor:Number(total)}]});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await Promise.all([carregarCozinha(),carregarProdutos()]);}
   catch(e){mostrarMensagem(e.message,'error');}
 }
 async function cancelarPedidoUI(id){
@@ -1796,7 +1815,7 @@ async function cancelarPedidoUI(id){
   if(motivo===null)return;
   if(!motivo.trim()){mostrarMensagem('Informe o motivo do cancelamento.','error');return;}
   if(!confirm('Confirmar cancelamento deste pedido?'))return;
-  try{const r=await requisicaoPOST({acao:'cancelarPedido',pedido_id:id,observacao:motivo.trim()});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await Promise.all([carregarPedidos(),carregarHistoricoCancelamentos()]);}
+  try{const r=await requisicaoPOST({acao:'cancelarPedido',pedido_id:id,observacao:motivo.trim()});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await Promise.all([carregarCozinha(),carregarHistoricoCancelamentos()]);}
   catch(e){mostrarMensagem(e.message,'error');}
 }
 
@@ -1909,7 +1928,7 @@ async function atualizarComandasAutomaticamente(){
   finally{atualizacaoComandasEmAndamento=false;}
 }
 setInterval(atualizarComandasAutomaticamente,5000);
-setInterval(()=>{const s=document.getElementById('secao-cozinha');if(s&&s.classList.contains('active')&&!document.hidden)carregarCozinha();},5000);
+setInterval(()=>{const s=document.getElementById('secao-cozinha');if(s&&s.classList.contains('active')&&!document.hidden)carregarCozinha();const h=document.getElementById('secao-inicio');if(h&&h.classList.contains('active')&&!document.hidden)carregarIndicadores();},20000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)atualizarComandasAutomaticamente();});
 
 function copiarTexto(txt) {
@@ -2007,32 +2026,54 @@ async function carregarRelatorios(){
 // 1) PAINEL DA COZINHA E IMPRESSÃO
 // ======================================================
 let cozinhaEmAtualizacao=false;
+let filtroCozinhaAtual='TODOS';
+let idsPedidosConhecidos=new Set();
+let somNotificacaoAtivo=true;
+function filtrarCozinha(filtro){filtroCozinhaAtual=filtro||'TODOS';carregarCozinha();}
+function avisarNovoPedido(qtd){
+ if(!qtd)return;
+ if(!document.hidden){
+  try{const C=window.AudioContext||window.webkitAudioContext;if(C){const ctx=new C();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;gain.gain.value=.045;osc.start();osc.stop(ctx.currentTime+.16);}}
+  catch(e){}
+ }
+ const st=document.getElementById('statusCozinha');if(st)st.textContent='🔔 '+qtd+' novo(s) pedido(s) recebido(s)!';
+}
 async function carregarCozinha(){
  const status=document.getElementById('statusCozinha');
  if(cozinhaEmAtualizacao)return;cozinhaEmAtualizacao=true;
  try{
   const r=await requisicaoPOST({acao:'listarPedidosCozinha'});if(!r.sucesso)throw new Error(r.mensagem);
-  renderizarCozinha(r.dados||[]);
+  const lista=r.dados||[];
+  const atuais=new Set(lista.map(p=>p.pedido_id));
+  const novos=lista.filter(p=>p.status==='PENDENTE'&&!idsPedidosConhecidos.has(p.pedido_id));
+  if(idsPedidosConhecidos.size)avisarNovoPedido(novos.length);
+  idsPedidosConhecidos=atuais;
+  renderizarCozinha(lista);
   if(status)status.textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');
  }catch(e){if(status)status.textContent='Falha ao atualizar';}
  finally{cozinhaEmAtualizacao=false;}
 }
 function renderizarCozinha(pedidos){
  const grupos={PENDENTE:[],EM_PREPARACAO:[],ENTREGUE:[]};
- pedidos.forEach(p=>{if(grupos[p.status])grupos[p.status].push(p);});
+ pedidos.forEach(p=>{if(grupos[p.status]&&(filtroCozinhaAtual==='TODOS'||filtroCozinhaAtual===p.status))grupos[p.status].push(p);});
  const cfg=[['PENDENTE','kdsNovos','kdsQtdNovos','novo'],['EM_PREPARACAO','kdsPreparo','kdsQtdPreparo','preparo'],['ENTREGUE','kdsEntregues','kdsQtdEntregues','entregue']];
  cfg.forEach(([st,id,qid,cl])=>{
   const el=document.getElementById(id);document.getElementById(qid).textContent=grupos[st].length;
   el.innerHTML=grupos[st].length?grupos[st].map(p=>{
    const itens=(p.itens||[]).map(i=>`<div class="kds-item"><span>${Number(i.quantidade)}× ${escaparHTML(i.produto)}</span><strong>${moeda(i.total_item)}</strong></div>`).join('');
    const acao=st==='PENDENTE'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','EM_PREPARACAO').then(carregarCozinha)">Iniciar preparo</button>`:st==='EM_PREPARACAO'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','ENTREGUE').then(carregarCozinha)">Marcar entregue</button>`:'';
-   return `<article class="kds-card ${cl}"><h5>${escaparHTML(p.cliente_mesa||'Pedido QR')}</h5><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div>${itens}<div class="kds-actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acao}</div></article>`;
+   return `<article class="kds-card ${cl}"><h5>${escaparHTML(p.cliente_mesa||'Pedido QR')}</h5><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div>${itens}<div class="kds-actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acao}<button class="btn btn-danger btn-small" onclick="cancelarPedidoUI('${escaparAtributo(p.pedido_id)}')">Cancelar</button></div></article>`;
   }).join(''):'<div class="empty">Nenhum pedido.</div>';
  });
 }
 function imprimirDocumento(titulo,corpo,w){
  if(!w){mostrarMensagem('Permita pop-ups para imprimir.','error');return;}
- w.document.open();w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escaparHTML(titulo)}</title><style>body{font-family:Arial,sans-serif;padding:22px;color:#111}h1{font-size:22px;margin:0 0 5px}h2{font-size:16px;margin:18px 0 8px}p{font-size:12px;margin:4px 0}.linha{display:flex;justify-content:space-between;border-bottom:1px dashed #bbb;padding:8px 0;font-size:14px}.total{font-size:20px;font-weight:bold;margin-top:18px;text-align:right}@media print{button{display:none}}</style></head><body>${corpo}<script>window.onload=()=>{window.print();};<\/script></body></html>`);w.document.close();
+ w.document.open();w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escaparHTML(titulo)}</title><style>body{font-family:Arial,sans-serif;padding:22px;color:#111}h1{font-size:22px;margin:0 0 5px}h2{font-size:16px;margin:18px 0 8px}p{font-size:12px;margin:4px 0}.linha{display:flex;justify-content:space-between;border-bottom:1px dashed #bbb;padding:8px 0;font-size:14px}.total{font-size:20px;font-weight:bold;margin-top:18px;text-align:right}@media print{button{display:none}}
+.search-result{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:1px solid var(--borda);background:#fff;border-radius:9px;padding:11px;margin-top:7px;color:var(--texto)}
+.search-result:hover{border-color:var(--dourado);background:#fffdf6}.search-result small{color:var(--cinza)}
+.kds-filtros{margin-top:12px}.kds-filtros button{flex:0 0 auto}
+@media(max-width:650px){.topbar{flex-wrap:wrap}.topbar>div:last-child{width:100%;justify-content:space-between}.kds-filtros button{flex:1 1 42%}}
+</style></head><body>${corpo}<script>window.onload=()=>{window.print();};<\/script></body></html>`);w.document.close();
 }
 async function imprimirPedido(id){
  const w=window.open('','_blank','width=800,height=700');
@@ -2094,8 +2135,9 @@ async function carregarEstoqueInteligente(){
 // ======================================================
 // 4) HISTÓRICO DE CANCELAMENTOS
 // ======================================================
+async function carregarHistoricoCancelamentosCozinha(){return carregarHistoricoCancelamentos();}
 async function carregarHistoricoCancelamentos(){
- const el=document.getElementById('listaCancelamentos');if(!el)return;
+ const el=document.getElementById('listaCancelamentosCozinha')||document.getElementById('listaCancelamentos');if(!el)return;
  try{const r=await requisicaoPOST({acao:'listarHistoricoCancelamentos',limite:200});if(!r.sucesso)throw new Error(r.mensagem);const lista=r.dados||[];
   el.innerHTML=lista.length?tabelaHTML(['Data','Pedido / Cliente','Origem','Valor','Motivo'],lista.map(x=>`<tr class="finance-exit"><td>${dataHora(x.data_hora)}</td><td>${escaparHTML(x.cliente_mesa||x.pedido_id)}<div class="muted">${escaparHTML(x.pedido_id)}</div></td><td>${escaparHTML(x.origem)}</td><td>${moeda(x.valor)}</td><td>${escaparHTML(x.motivo)}</td></tr>`)):'<div class="empty">Nenhum cancelamento registrado.</div>';
  }catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
@@ -2110,6 +2152,7 @@ async function carregarIndicadores(){
   set('indFaturamento',moeda(d.faturamento));set('indPedidos',d.pedidos||0);set('indTicket',moeda(d.ticket_medio));
   set('indTopProduto',d.produto_mais_vendido?d.produto_mais_vendido.produto:'—');
   set('indMovimento',moeda(d.entradas)+' / '+moeda(d.saidas));set('indSaldo',moeda(d.saldo));
+  Promise.all([requisicaoPOST({acao:'listarPedidosCozinha'}),requisicaoPOST({acao:'listarComandas'}),requisicaoPOST({acao:'listarEstoqueInteligente'})]).then(([a,b,c])=>{set('indAguardando',(a.dados||[]).filter(x=>x.status==='PENDENTE').length);set('indMesasAbertas',(b.dados||[]).length);set('indAlertasEstoque',(c.dados||[]).filter(x=>x.situacao!=='NORMAL').length);}).catch(()=>{});
  }catch(e){console.warn('Indicadores:',e.message);}
 }
 
@@ -2123,6 +2166,35 @@ function limparVendaSemConfirmar() {
   pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
   document.getElementById("clienteVenda").value = "";
   renderizarCarrinho();
+}
+
+
+// BUSCA GERAL E HISTÓRICO DE VENDAS
+let cacheBuscaGeral=null;
+function abrirBuscaGeral(){document.getElementById('modalBuscaGeral').classList.add('open');document.getElementById('buscaGeralTexto').focus();}
+function fecharBuscaGeral(){document.getElementById('modalBuscaGeral').classList.remove('open');}
+async function executarBuscaGeral(){
+ const q=(document.getElementById('buscaGeralTexto').value||'').trim().toLowerCase();const el=document.getElementById('resultadoBuscaGeral');
+ if(q.length<2){el.innerHTML='<div class="empty">Digite pelo menos 2 caracteres.</div>';return;}
+ el.innerHTML='<div class="loading">Pesquisando...</div>';
+ try{
+  if(!cacheBuscaGeral){const [p,o,c,x]=await Promise.all([requisicaoPOST({acao:'listarProdutos'}),requisicaoPOST({acao:'listarPedidos'}),requisicaoPOST({acao:'listarComandas'}),requisicaoPOST({acao:'listarCaixa',limite:200})]);cacheBuscaGeral={produtos:p.dados||[],pedidos:o.dados||[],comandas:c.dados||[],caixa:x.dados||[]};}
+  const res=[];
+  cacheBuscaGeral.produtos.filter(x=>(x.nome+' '+x.categoria).toLowerCase().includes(q)).forEach(x=>res.push({tipo:'Produto',nome:x.nome,sub:x.categoria,acao:"abrirSecao('produtos')"}));
+  cacheBuscaGeral.comandas.filter(x=>(x.mesa+' '+x.comanda_id).toLowerCase().includes(q)).forEach(x=>res.push({tipo:'Mesa aberta',nome:x.mesa,sub:'Comanda '+x.comanda_id,acao:"abrirSecao('mesas')"}));
+  cacheBuscaGeral.pedidos.filter(x=>(x.pedido_id+' '+x.cliente_mesa+' '+x.status).toLowerCase().includes(q)||(x.itens||[]).some(i=>String(i.produto).toLowerCase().includes(q))).forEach(x=>res.push({tipo:'Pedido',nome:x.cliente_mesa||x.pedido_id,sub:x.status+' · '+x.pedido_id,acao:"abrirSecao('cozinha')"}));
+  cacheBuscaGeral.caixa.filter(x=>(x.descricao+' '+x.referencia+' '+x.forma_pagamento).toLowerCase().includes(q)).forEach(x=>res.push({tipo:'Caixa',nome:x.descricao,sub:moeda(x.valor)+' · '+x.tipo,acao:"abrirSecao('caixa')"}));
+  el.innerHTML=res.length?res.slice(0,40).map(x=>`<button class="search-result" onclick="fecharBuscaGeral();${x.acao}"><b>${escaparHTML(x.nome)}</b><small>${escaparHTML(x.tipo)} · ${escaparHTML(x.sub||'')}</small></button>`).join(''):'<div class="empty">Nenhum resultado encontrado.</div>';
+ }catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
+}
+async function carregarHistoricoVendas(){
+ const el=document.getElementById('historicoVendasLista');if(!el)return;el.innerHTML='<div class="loading">Consultando vendas...</div>';
+ try{const r=await requisicaoPOST({acao:'listarCaixa',limite:300});if(!r.sucesso)throw new Error(r.mensagem);window.historicoVendasCache=(r.dados||[]).filter(x=>String(x.origem||'').includes('VENDA')||String(x.origem||'').includes('PEDIDO_QR'));filtrarHistoricoVendas();}catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
+}
+function filtrarHistoricoVendas(){
+ const el=document.getElementById('historicoVendasLista');if(!el)return;let lista=window.historicoVendasCache||[];const q=(document.getElementById('historicoVendaBusca')?.value||'').toLowerCase();const dt=document.getElementById('historicoVendaData')?.value;
+ lista=lista.filter(x=>(!dt||String(x.data_hora).slice(0,10)===dt)&&(!q||[x.descricao,x.referencia,x.forma_pagamento,x.origem].join(' ').toLowerCase().includes(q)));
+ el.innerHTML=lista.length?tabelaHTML(['Data','Descrição','Forma','Valor','Referência'],lista.map(x=>`<tr class="finance-entry"><td>${dataHora(x.data_hora)}</td><td>${escaparHTML(x.descricao)}</td><td>${escaparHTML(x.forma_pagamento)}</td><td>${moeda(x.valor)}</td><td>${escaparHTML(x.referencia)}</td></tr>`)):'<div class="empty">Nenhuma venda encontrada para os filtros.</div>';
 }
 
 </script>
