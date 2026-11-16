@@ -545,6 +545,35 @@ td {
 @media(max-width:900px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.main{padding:15px}.module-grid{grid-template-columns:1fr}.inline-form{grid-template-columns:1fr}.inline-form .full{grid-column:auto}.cards{grid-template-columns:1fr}}
 
+
+/* Ajustes do módulo Mesas / Comandas */
+#secao-mesas .panel {padding:16px;margin-bottom:14px}
+#secao-mesas .panel-header {margin-bottom:12px}
+#secao-mesas .inline-form {grid-template-columns:minmax(220px,1fr) auto;align-items:end;max-width:760px}
+#listaMesas.mesa-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px}
+.mesa-card {display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--borda);border-radius:10px;background:#fff;min-width:0}
+.mesa-card img {width:70px;height:70px;object-fit:contain;border-radius:7px;flex:0 0 70px}
+.mesa-card-info {min-width:0;flex:1}
+.mesa-card-info strong {display:block;color:var(--verde);font-size:13px}
+.mesa-card-info .muted {font-size:11px;margin:3px 0}
+.mesa-card-actions {display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+#listaComandas {display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+#listaComandas .panel {margin:0;padding:14px}
+#listaComandas .panel-header {margin-bottom:9px}
+#listaComandas .pedido-item {padding:7px 0;font-size:12px}
+#listaComandas .pedido-total {padding-top:8px;margin-top:7px}
+.finance-entry {color:#247342;font-weight:600;background:#f0f8f1}
+.finance-exit {color:#b42318;font-weight:600;background:#fff1f0}
+.finance-entry td:nth-child(2),.finance-entry td:nth-child(5) {color:#247342;font-weight:700}
+.finance-exit td:nth-child(2),.finance-exit td:nth-child(5) {color:#b42318;font-weight:700}
+.payment-modal-total {font-size:21px;font-weight:800;color:var(--verde);margin:8px 0 14px}
+.payment-row {display:grid;grid-template-columns:minmax(140px,1fr) minmax(120px,150px) 34px;gap:8px;margin-bottom:9px;align-items:center}
+.payment-row select,.payment-row input {padding:10px}
+.payment-balance {padding:11px;border-radius:8px;background:#f2f5f2;font-weight:700;margin:12px 0}
+.payment-balance.ok {background:#e4f4e8;color:#216b39}
+.payment-balance.error {background:#fff0ee;color:#a52a22}
+@media(max-width:600px){#secao-mesas .inline-form{grid-template-columns:1fr}#listaMesas.mesa-grid,#listaComandas{grid-template-columns:1fr}.mesa-card img{width:62px;height:62px;flex-basis:62px}.payment-row{grid-template-columns:1fr 110px 30px}}
+
 </style>
 </head>
 
@@ -746,17 +775,17 @@ td {
     </section>
     <section id="secao-mesas" class="secao">
       <div class="panel">
-        <div class="panel-header"><h3>Cadastro de mesas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
+        <div class="panel-header"><h3>Comandas abertas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
+        <p class="muted">Pedidos de cada mesa reunidos em uma única conta. Confira os pedidos e feche a mesa pelo valor total.</p>
+        <div id="listaComandas"><div class="empty">Carregando comandas...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>Mesas e QR Codes</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
         <form class="inline-form" onsubmit="salvarMesaUI(event)">
           <div class="form-group"><label>Nome da mesa</label><input id="nomeNovaMesa" maxlength="50" placeholder="Ex.: Mesa 01" required></div>
           <div class="form-group"><button class="btn btn-primary" type="submit">＋ Criar mesa e QR Code</button></div>
         </form>
-        <div id="listaMesas"><div class="empty">Carregando mesas...</div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><h3>Comandas abertas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
-        <p class="muted">Todos os pedidos enviados pelo QR Code de uma mesa são reunidos aqui. O fechamento é feito pelo total da mesa.</p>
-        <div id="listaComandas"><div class="empty">Carregando comandas...</div></div>
+        <div id="listaMesas" class="mesa-grid"><div class="empty">Carregando mesas...</div></div>
       </div>
     </section>
     <section id="secao-estoque" class="secao">
@@ -799,7 +828,8 @@ td {
         <div class="module-card"><small>Vendas concluídas</small><strong id="relVendas">R$ 0,00</strong></div><div class="module-card"><small>Pedidos concluídos</small><strong id="relPedidos">0</strong></div><div class="module-card"><small>Itens vendidos</small><strong id="relItens">0</strong></div><div class="module-card"><small>Entradas</small><strong id="relEntradas">R$ 0,00</strong></div><div class="module-card"><small>Saídas</small><strong id="relSaidas">R$ 0,00</strong></div><div class="module-card"><small>Saldo caixa</small><strong id="relSaldo">R$ 0,00</strong></div>
       </div>
       <div class="panel"><div class="panel-header"><h3>Vendas por forma de pagamento</h3></div><div id="relPorForma"></div></div>
-      <div class="panel"><div class="panel-header"><h3>Itens vendidos</h3></div><div id="relListaVendas"></div></div>
+      <div class="panel"><div class="panel-header"><h3>Movimentações financeiras do período</h3><span class="muted">Entradas em verde · Saídas em vermelho</span></div><div id="relMovimentacoes"></div></div>
+      <div class="panel"><div class="panel-header"><h3>Produtos vendidos</h3></div><div id="relListaVendas"></div></div>
     </section>
     <section id="secao-configuracoes" class="secao">
       <div class="panel"><div class="panel-header"><h3>Diagnóstico do sistema</h3><button class="btn btn-primary" onclick="validarSistema()">Verificar agora</button></div><div id="diagnosticoSistema" class="empty">Clique em verificar para testar servidor e planilha.</div></div>
@@ -808,6 +838,19 @@ td {
     </section>
 
   </main>
+</div>
+
+<!-- MODAL DE FECHAMENTO DE COMANDA -->
+<div class="modal" id="modalPagamentoComanda">
+  <div class="modal-content">
+    <div class="modal-title"><h3>Fechar comanda</h3><button class="close" onclick="fecharModalPagamentoComanda()">×</button></div>
+    <div class="muted" id="pagamentoMesaNome">Conferência de pagamento da mesa</div>
+    <div class="payment-modal-total" id="pagamentoComandaTotal">R$ 0,00</div>
+    <div id="linhasPagamentoComanda"></div>
+    <button type="button" class="btn btn-secondary btn-small" onclick="adicionarPagamentoComanda()">＋ Adicionar forma de pagamento</button>
+    <div id="saldoPagamentoComanda" class="payment-balance">Informe os valores recebidos.</div>
+    <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="fecharModalPagamentoComanda()">Cancelar</button><button type="button" class="btn btn-primary" id="confirmarFechamentoComanda" onclick="confirmarFechamentoComanda()">Confirmar fechamento</button></div>
+  </div>
 </div>
 
 <!-- MODAL DE PRODUTO -->
@@ -1711,25 +1754,21 @@ async function carregarMesas() {
   const lm = document.getElementById("listaMesas");
   const lc = document.getElementById("listaComandas");
   if (!lm || !lc) return;
-  lm.innerHTML = '<div class="empty">Carregando...</div>';
-  lc.innerHTML = '<div class="empty">Carregando...</div>';
+  lm.innerHTML = '<div class="empty">Carregando mesas...</div>';
+  lc.innerHTML = '<div class="empty">Carregando comandas...</div>';
   try {
-    const [rm, rc] = await Promise.all([
-      requisicaoPOST({acao:"listarMesas"}),
-      requisicaoPOST({acao:"listarComandas"})
-    ]);
+    const [rm, rc] = await Promise.all([requisicaoPOST({acao:"listarMesas"}),requisicaoPOST({acao:"listarComandas"})]);
     if (!rm.sucesso) throw new Error(rm.mensagem);
     if (!rc.sucesso) throw new Error(rc.mensagem);
     const mesas = rm.dados || [];
     lm.innerHTML = mesas.length ? mesas.map(m => {
       const url = urlQrMesa(m);
-      const qr = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(url);
-      return `<article class="pedido-card panel" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-        <img src="${qr}" alt="QR Code ${escaparHTML(m.nome)}" width="112" height="112" style="border-radius:10px">
-        <div style="flex:1;min-width:220px"><strong>${escaparHTML(m.nome)}</strong>
-          <div class="muted">${m.comanda_aberta ? "Comanda aberta" : "Disponível para novo atendimento"}</div>
-          <div class="muted" style="word-break:break-all">${escaparHTML(url)}</div>
-          <div class="actions"><button class="btn btn-secondary btn-small" onclick="copiarTexto('${escaparAtributo(url)}')">Copiar link</button></div>
+      const qr = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + encodeURIComponent(url);
+      return `<article class="mesa-card">
+        <img src="${qr}" alt="QR Code ${escaparHTML(m.nome)}" width="70" height="70">
+        <div class="mesa-card-info"><strong>${escaparHTML(m.nome)}</strong>
+          <div class="muted">${m.comanda_aberta ? "Comanda em atendimento" : "Disponível"}</div>
+          <div class="mesa-card-actions"><button class="btn btn-secondary btn-small" onclick="copiarTexto('${escaparAtributo(url)}')">Copiar link</button></div>
         </div>
       </article>`;
     }).join("") : '<div class="empty">Nenhuma mesa cadastrada. Crie a primeira acima.</div>';
@@ -1741,41 +1780,62 @@ async function carregarMesas() {
         return `<div class="pedido-item"><span><b>${escaparHTML(p.pedido_id)}</b> · ${escaparHTML(p.status)}<br><small>${itens}</small></span><strong>${moeda(p.total)}</strong></div>`;
       }).join("");
       return `<article class="panel pedido-card">
-        <div class="panel-header"><div><strong>${escaparHTML(c.mesa)}</strong><div class="muted">Aberta em ${dataHora(c.data_abertura)} · ${c.quantidade_pedidos} pedido(s)</div></div><span class="badge badge-ativo">ABERTA</span></div>
+        <div class="panel-header"><div><strong>${escaparHTML(c.mesa)}</strong><div class="muted">${dataHora(c.data_abertura)} · ${c.quantidade_pedidos} pedido(s)</div></div><span class="badge badge-ativo">ABERTA</span></div>
         ${pedidos}<div class="pedido-total"><strong>Total da mesa: ${moeda(c.total)}</strong></div>
-        <div class="actions"><button class="btn btn-primary btn-small" onclick="fecharComandaUI('${escaparAtributo(c.comanda_id)}',${Number(c.total)||0})">Fechar comanda</button></div>
+        <div class="actions"><button class="btn btn-primary btn-small" onclick="fecharComandaUI('${escaparAtributo(c.comanda_id)}',${Number(c.total)||0},'${escaparAtributo(c.mesa)}')">Fechar comanda</button></div>
       </article>`;
     }).join("") : '<div class="empty">Nenhuma comanda aberta no momento.</div>';
-  } catch(e) {
-    lm.innerHTML = lc.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>';
-  }
+  } catch(e) { lm.innerHTML = lc.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>'; }
 }
 function copiarTexto(txt) {
   navigator.clipboard.writeText(txt).then(() => mostrarMensagem("Link copiado.", "success"))
     .catch(() => mostrarMensagem("Não foi possível copiar o link neste navegador.", "error"));
 }
-async function fecharComandaUI(id,total) {
-  const dinheiro = Number(prompt("Valor pago em DINHEIRO (R$). Se não houver, informe 0:", "0") || 0);
-  const pix = Number(prompt("Valor pago em PIX (R$). Se não houver, informe 0:", "0") || 0);
-  const debito = Number(prompt("Valor pago em CARTÃO DE DÉBITO (R$). Se não houver, informe 0:", "0") || 0);
-  const credito = Number(prompt("Valor pago em CARTÃO DE CRÉDITO (R$). Se não houver, informe 0:", "0") || 0);
-  const pagamentos = [
-    {forma:"DINHEIRO",valor:dinheiro},{forma:"PIX",valor:pix},
-    {forma:"CARTÃO DE DÉBITO",valor:debito},{forma:"CARTÃO DE CRÉDITO",valor:credito}
-  ].filter(x => x.valor > 0);
-  const soma = pagamentos.reduce((a,x)=>a+x.valor,0);
-  if (Math.abs(soma-Number(total)) > 0.009) {
-    mostrarMensagem("Os pagamentos somam "+moeda(soma)+". O total da mesa é "+moeda(total)+".", "error");
-    return;
-  }
-  if (!pagamentos.length || !confirm("Confirmar fechamento da mesa no total de "+moeda(total)+"?")) return;
-  try {
-    const r = await requisicaoPOST({acao:"fecharComanda",comanda_id:id,pagamentos,responsavel:"Atendente"});
-    if (!r.sucesso) throw new Error(r.mensagem);
-    mostrarMensagem(r.mensagem, "success");
-    await Promise.all([carregarMesas(),carregarPedidos(),carregarProdutos(),carregarCaixa()]);
-  } catch(e) { mostrarMensagem(e.message, "error"); }
+let comandaPagamentoAtual = null;
+let pagamentosComandaUI = [];
+const FORMAS_PAGAMENTO_COMANDA = ["DINHEIRO","PIX","CARTÃO DE DÉBITO","CARTÃO DE CRÉDITO","TRANSFERÊNCIA","OUTRO"];
+function fecharComandaUI(id,total,mesa) {
+  comandaPagamentoAtual = {id,total:Number(total)||0,mesa:mesa||"Mesa"};
+  pagamentosComandaUI = [{forma:"DINHEIRO",valor:Number(total)||0}];
+  document.getElementById("pagamentoMesaNome").textContent = comandaPagamentoAtual.mesa;
+  document.getElementById("pagamentoComandaTotal").textContent = moeda(comandaPagamentoAtual.total);
+  renderizarPagamentosComanda();
+  document.getElementById("modalPagamentoComanda").classList.add("open");
 }
+function fecharModalPagamentoComanda(){document.getElementById("modalPagamentoComanda").classList.remove("open");comandaPagamentoAtual=null;}
+function adicionarPagamentoComanda(){pagamentosComandaUI.push({forma:"PIX",valor:0});renderizarPagamentosComanda();}
+function removerPagamentoComanda(i){if(pagamentosComandaUI.length<=1)return;pagamentosComandaUI.splice(i,1);renderizarPagamentosComanda();}
+function atualizarPagamentoComanda(i,campo,valor){pagamentosComandaUI[i][campo]=campo==="valor"?(Number(valor)||0):valor;atualizarSaldoComanda();}
+function renderizarPagamentosComanda(){
+ const el=document.getElementById("linhasPagamentoComanda");
+ el.innerHTML=pagamentosComandaUI.map((p,i)=>`<div class="payment-row"><select aria-label="Forma de pagamento" onchange="atualizarPagamentoComanda(${i},'forma',this.value)">${FORMAS_PAGAMENTO_COMANDA.map(f=>`<option value="${f}" ${p.forma===f?'selected':''}>${f}</option>`).join("")}</select><input aria-label="Valor recebido" type="number" min="0" step="0.01" value="${Number(p.valor)||0}" oninput="atualizarPagamentoComanda(${i},'valor',this.value)"><button type="button" class="btn btn-danger btn-small" onclick="removerPagamentoComanda(${i})" ${pagamentosComandaUI.length===1?'disabled':''}>×</button></div>`).join("");
+ atualizarSaldoComanda();
+}
+function atualizarSaldoComanda(){
+ if(!comandaPagamentoAtual)return;
+ const soma=pagamentosComandaUI.reduce((a,p)=>a+(Number(p.valor)||0),0),dif=Number((comandaPagamentoAtual.total-soma).toFixed(2));
+ const el=document.getElementById("saldoPagamentoComanda");
+ el.className="payment-balance "+(Math.abs(dif)<0.01?"ok":"error");
+ el.textContent=Math.abs(dif)<0.01?"Pagamento conferido: "+moeda(soma):dif>0?"Falta receber: "+moeda(dif):"Valor excedente: "+moeda(Math.abs(dif));
+ document.getElementById("confirmarFechamentoComanda").disabled=Math.abs(dif)>=0.01||soma<=0;
+}
+async function confirmarFechamentoComanda(){
+ if(!comandaPagamentoAtual)return;
+ const soma=pagamentosComandaUI.reduce((a,p)=>a+(Number(p.valor)||0),0);
+ if(Math.abs(soma-comandaPagamentoAtual.total)>=0.01){mostrarMensagem("Os pagamentos precisam corresponder ao total da comanda.","error");return;}
+ const pagamentos=pagamentosComandaUI.filter(p=>Number(p.valor)>0).map(p=>({forma:p.forma,valor:Number(p.valor)}));
+ const atual=comandaPagamentoAtual;
+ if(!confirm("Confirmar fechamento de "+atual.mesa+" no total de "+moeda(atual.total)+"?"))return;
+ const btn=document.getElementById("confirmarFechamentoComanda");btn.disabled=true;btn.textContent="Fechando...";
+ try{
+  const r=await requisicaoPOST({acao:"fecharComanda",comanda_id:atual.id,pagamentos,responsavel:"Atendente"});
+  if(!r.sucesso)throw new Error(r.mensagem);
+  fecharModalPagamentoComanda();mostrarMensagem(r.mensagem,"success");
+  await Promise.all([carregarMesas(),carregarPedidos(),carregarProdutos(),carregarCaixa()]);
+ }catch(e){mostrarMensagem(e.message,"error");}
+ finally{btn.textContent="Confirmar fechamento";atualizarSaldoComanda();}
+}
+document.getElementById("modalPagamentoComanda").addEventListener("click",function(e){if(e.target===this)fecharModalPagamentoComanda();});
 
 function renderizarEstoque(){
   const lista=produtos.filter(p=>p.controlar_estoque===true);
@@ -1797,7 +1857,7 @@ async function registrarMovimentacaoEstoque(ev){
 
 async function carregarCaixa(){
  const el=document.getElementById('listaCaixa');if(!el)return;el.innerHTML='<div class="empty">Consultando caixa...</div>';
- try{const r=await requisicaoPOST({acao:'listarCaixa',limite:500});if(!r.sucesso)throw new Error(r.mensagem);const rows=r.dados||[];let ent=0,sai=0;rows.forEach(x=>{if(x.tipo==='ENTRADA')ent+=Number(x.valor)||0;else sai+=Number(x.valor)||0;});document.getElementById('caixaEntradas').textContent=moeda(ent);document.getElementById('caixaSaidas').textContent=moeda(sai);document.getElementById('caixaSaldo').textContent=moeda(ent-sai);el.innerHTML=tabelaHTML(['Data','Tipo','Descrição','Forma','Valor','Origem'],rows.map(x=>`<tr><td>${dataHora(x.data_hora)}</td><td>${escaparHTML(x.tipo)}</td><td>${escaparHTML(x.descricao)}</td><td>${escaparHTML(x.forma_pagamento)}</td><td>${moeda(x.valor)}</td><td>${escaparHTML(x.origem)}</td></tr>`));}
+ try{const r=await requisicaoPOST({acao:'listarCaixa',limite:500});if(!r.sucesso)throw new Error(r.mensagem);const rows=r.dados||[];let ent=0,sai=0;rows.forEach(x=>{if(x.tipo==='ENTRADA')ent+=Number(x.valor)||0;else sai+=Number(x.valor)||0;});document.getElementById('caixaEntradas').textContent=moeda(ent);document.getElementById('caixaSaidas').textContent=moeda(sai);document.getElementById('caixaSaldo').textContent=moeda(ent-sai);el.innerHTML=tabelaHTML(['Data','Tipo','Descrição','Forma','Valor','Origem'],rows.map(x=>`<tr class="${x.tipo==='SAIDA'?'finance-exit':'finance-entry'}"><td>${dataHora(x.data_hora)}</td><td>${escaparHTML(x.tipo==='SAIDA'?'SAÍDA':'ENTRADA')}</td><td>${escaparHTML(x.descricao)}</td><td>${escaparHTML(x.forma_pagamento)}</td><td>${x.tipo==='SAIDA'?'− ': '+ '}${moeda(x.valor)}</td><td>${escaparHTML(x.origem)}</td></tr>`));}
  catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
 }
 async function registrarLancamento(ev){
@@ -1807,11 +1867,16 @@ async function registrarLancamento(ev){
 async function carregarRelatorios(){
  const inicio=document.getElementById('relatorioInicio').value,fim=document.getElementById('relatorioFim').value;
  if(inicio&&fim&&inicio>fim){mostrarMensagem('A data inicial não pode ser posterior à data final.','error');return;}
- try{const r=await requisicaoPOST({acao:'relatorioPeriodo',inicio,fim});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};
- document.getElementById('relVendas').textContent=moeda(d.vendas);document.getElementById('relPedidos').textContent=d.pedidos||0;document.getElementById('relItens').textContent=d.itens||0;document.getElementById('relEntradas').textContent=moeda(d.entradas);document.getElementById('relSaidas').textContent=moeda(d.saidas);document.getElementById('relSaldo').textContent=moeda((Number(d.entradas)||0)-(Number(d.saidas)||0));
- const formas=Object.entries(d.porForma||{});document.getElementById('relPorForma').innerHTML=tabelaHTML(['Forma de pagamento','Total'],formas.map(([f,v])=>`<tr><td>${escaparHTML(f)}</td><td>${moeda(v)}</td></tr>`));document.getElementById('relListaVendas').innerHTML=tabelaHTML(['Produto','Quantidade','Total'],(d.itensDetalhados||[]).map(x=>`<tr><td>${escaparHTML(x.produto)}</td><td>${x.quantidade}</td><td>${moeda(x.total)}</td></tr>`));
+ try{
+  const r=await requisicaoPOST({acao:'relatorioPeriodo',inicio,fim});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};
+  document.getElementById('relVendas').textContent=moeda(d.vendas);document.getElementById('relPedidos').textContent=d.pedidos||0;document.getElementById('relItens').textContent=d.itens||0;document.getElementById('relEntradas').textContent=moeda(d.entradas);document.getElementById('relSaidas').textContent=moeda(d.saidas);document.getElementById('relSaldo').textContent=moeda((Number(d.entradas)||0)-(Number(d.saidas)||0));
+  const formas=Object.entries(d.porForma||{});document.getElementById('relPorForma').innerHTML=tabelaHTML(['Forma de pagamento','Total de entradas de vendas'],formas.map(([f,v])=>`<tr class="finance-entry"><td>${escaparHTML(f)}</td><td>+ ${moeda(v)}</td></tr>`));
+  const movs=d.movimentacoes||[];
+  document.getElementById('relMovimentacoes').innerHTML=tabelaHTML(['Data','Movimento','Descrição','Forma','Valor','Origem'],movs.map(x=>`<tr class="${x.tipo==='SAIDA'?'finance-exit':'finance-entry'}"><td>${dataHora(x.data_hora)}</td><td>${x.tipo==='SAIDA'?'SAÍDA':'ENTRADA'}</td><td>${escaparHTML(x.descricao)}</td><td>${escaparHTML(x.forma_pagamento)}</td><td>${x.tipo==='SAIDA'?'− ':'+ '}${moeda(x.valor)}</td><td>${escaparHTML(x.origem)}</td></tr>`));
+  document.getElementById('relListaVendas').innerHTML=tabelaHTML(['Produto','Quantidade','Total vendido'],(d.itensDetalhados||[]).map(x=>`<tr><td>${escaparHTML(x.produto)}</td><td>${x.quantidade}</td><td>${moeda(x.total)}</td></tr>`));
  }catch(e){mostrarMensagem(e.message,'error');}
 }
+
 async function validarSistema(){
  const el=document.getElementById('diagnosticoSistema');el.innerHTML='Verificando conexão e estrutura...';
  try{const [c,e]=await Promise.all([requisicaoGET('testarConexao'),requisicaoGET('validarEstrutura')]);if(!c.sucesso)throw new Error(c.mensagem);if(!e.sucesso)throw new Error(e.mensagem);el.innerHTML=`<div class="notice"><strong>Conexão confirmada.</strong><br>Planilha: ${escaparHTML(c.dados?.planilha||'Conectada')}<br>Estrutura: validada.<br>Abas e cabeçalhos preservados.</div>`;atualizarStatus(true);}catch(err){el.innerHTML='<div class="empty">Falha no diagnóstico: '+escaparHTML(err.message)+'</div>';atualizarStatus(false);}
@@ -1828,3 +1893,4 @@ function limparVendaSemConfirmar() {
 
 </body>
 </html>
+
