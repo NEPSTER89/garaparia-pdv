@@ -563,6 +563,7 @@ td {
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
       <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
       <button onclick="abrirSecao('pedidos',this)">♧ Pedidos</button>
+      <button onclick="abrirSecao('mesas',this)">▦ Mesas / Comandas</button>
       <button onclick="abrirSecao('estoque',this)">▤ Estoque</button>
       <button onclick="abrirSecao('caixa',this)">＄ Caixa</button>
       <button onclick="abrirSecao('relatorios',this)">▥ Relatórios</button>
@@ -741,6 +742,21 @@ td {
       <div class="panel"><div class="panel-header"><h3>Pedidos recebidos</h3><button class="btn btn-secondary" onclick="carregarPedidos()">↻ Atualizar</button></div>
         <div class="filters"><select id="filtroPedidos" onchange="carregarPedidos()"><option value="">Todos os status</option><option value="PENDENTE">Pendentes</option><option value="EM_PREPARACAO">Em preparação</option><option value="CONCLUIDO">Concluídos</option><option value="CANCELADO">Cancelados</option></select></div>
         <div id="listaPedidos"><div class="empty">Carregando pedidos...</div></div>
+      </div>
+    </section>
+    <section id="secao-mesas" class="secao">
+      <div class="panel">
+        <div class="panel-header"><h3>Cadastro de mesas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
+        <form class="inline-form" onsubmit="salvarMesaUI(event)">
+          <div class="form-group"><label>Nome da mesa</label><input id="nomeNovaMesa" maxlength="50" placeholder="Ex.: Mesa 01" required></div>
+          <div class="form-group"><button class="btn btn-primary" type="submit">＋ Criar mesa e QR Code</button></div>
+        </form>
+        <div id="listaMesas"><div class="empty">Carregando mesas...</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>Comandas abertas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
+        <p class="muted">Todos os pedidos enviados pelo QR Code de uma mesa são reunidos aqui. O fechamento é feito pelo total da mesa.</p>
+        <div id="listaComandas"><div class="empty">Carregando comandas...</div></div>
       </div>
     </section>
     <section id="secao-estoque" class="secao">
@@ -1354,6 +1370,7 @@ function abrirSecao(secao, botao) {
     produtos:["Produtos","Gerenciamento do catálogo"],
     vendas:["Vendas","PDV · Registro de vendas e pagamentos"],
     pedidos:["Pedidos","Acompanhe e conclua pedidos QR"],
+    mesas:["Mesas / Comandas","Acompanhe o consumo e feche cada mesa"],
     estoque:["Estoque","Entradas, saídas e posição atual"],
     caixa:["Caixa","Entradas, saídas e lançamentos"],
     relatorios:["Relatórios","Resumo de vendas e movimentações"],
@@ -1364,6 +1381,7 @@ function abrirSecao(secao, botao) {
   document.getElementById("sidebar").classList.remove("mobile-open");
   if(secao==="vendas")carregarProdutosVenda();
   if(secao==="pedidos")carregarPedidos();
+  if(secao==="mesas")carregarMesas();
   if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();}
   if(secao==="caixa")carregarCaixa();
   if(secao==="relatorios")carregarRelatorios();
@@ -1648,9 +1666,10 @@ async function carregarPedidos(){
     alvo.innerHTML=pedidos.map(p=>{
       const itens=(p.itens||[]).map(i=>`<div class="pedido-item">${escaparHTML(i.quantidade)} × ${escaparHTML(i.produto)} <span>${moeda(i.total_item)}</span></div>`).join('');
       const acoes=p.status==='PENDENTE'?`<button class="btn btn-secondary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','EM_PREPARACAO')">Iniciar preparo</button>`:'';
-      const concluir=['PENDENTE','EM_PREPARACAO'].includes(p.status)?`<button class="btn btn-primary btn-small" onclick="concluirPedidoUI('${escaparAtributo(p.pedido_id)}','${escaparAtributo(p.forma_pagamento||'OUTRO')}',${Number(p.total)||0})">Concluir pedido</button>`:'';
+      const concluir=(p.origem==='QR_CODE' && !p.comanda_id && ['PENDENTE','EM_PREPARACAO'].includes(p.status))?`<button class="btn btn-primary btn-small" onclick="concluirPedidoUI('${escaparAtributo(p.pedido_id)}','${escaparAtributo(p.forma_pagamento||'OUTRO')}',${Number(p.total)||0})">Concluir pedido</button>`:'';
+      const entregar=(p.origem==='QR_CODE' && p.comanda_id && ['PENDENTE','EM_PREPARACAO'].includes(p.status))?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','ENTREGUE')">Marcar entregue</button>`:'';
       const cancelar=['PENDENTE','EM_PREPARACAO'].includes(p.status)?`<button class="btn btn-danger btn-small" onclick="cancelarPedidoUI('${escaparAtributo(p.pedido_id)}')">Cancelar</button>`:'';
-      return `<article class="panel pedido-card"><div class="panel-header"><div><strong>${escaparHTML(p.cliente_mesa||'Cliente')}</strong><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div></div><span class="badge ${p.status==='CONCLUIDO'?'badge-ativo':p.status==='CANCELADO'?'badge-inativo':''}">${escaparHTML(p.status)}</span></div><div class="muted">Pedido: ${escaparHTML(p.pedido_id)}</div>${itens}<div class="pedido-total"><strong>Total: ${moeda(p.total)}</strong></div><div class="actions">${acoes}${concluir}${cancelar}</div></article>`;
+      return `<article class="panel pedido-card"><div class="panel-header"><div><strong>${escaparHTML(p.cliente_mesa||'Cliente')}</strong><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div></div><span class="badge ${p.status==='CONCLUIDO'?'badge-ativo':p.status==='CANCELADO'?'badge-inativo':''}">${escaparHTML(p.status)}</span></div><div class="muted">Pedido: ${escaparHTML(p.pedido_id)}</div>${itens}<div class="pedido-total"><strong>Total: ${moeda(p.total)}</strong></div><div class="actions">${acoes}${concluir}${entregar}${cancelar}</div></article>`;
     }).join('');
   }catch(e){alvo.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
 }
@@ -1667,6 +1686,95 @@ async function cancelarPedidoUI(id){
   if(!confirm('Deseja realmente cancelar este pedido?'))return;
   try{const r=await requisicaoPOST({acao:'cancelarPedido',pedido_id:id,observacao:'Cancelado pelo atendimento'});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await carregarPedidos();}
   catch(e){mostrarMensagem(e.message,'error');}
+}
+
+
+// ======================================================
+// MESAS E COMANDAS
+// ======================================================
+function urlQrMesa(m) {
+  const base = "https://nepster89.github.io/garaparia-pdv/cardapio.html";
+  return base + "?mesa=" + encodeURIComponent(m.mesa_id) + "&token=" + encodeURIComponent(m.token);
+}
+async function salvarMesaUI(ev) {
+  ev.preventDefault();
+  const nome = document.getElementById("nomeNovaMesa").value.trim();
+  try {
+    const r = await requisicaoPOST({acao:"salvarMesa", nome});
+    if (!r.sucesso) throw new Error(r.mensagem);
+    document.getElementById("nomeNovaMesa").value = "";
+    mostrarMensagem("Mesa criada. QR Code disponível na listagem.", "success");
+    await carregarMesas();
+  } catch(e) { mostrarMensagem(e.message, "error"); }
+}
+async function carregarMesas() {
+  const lm = document.getElementById("listaMesas");
+  const lc = document.getElementById("listaComandas");
+  if (!lm || !lc) return;
+  lm.innerHTML = '<div class="empty">Carregando...</div>';
+  lc.innerHTML = '<div class="empty">Carregando...</div>';
+  try {
+    const [rm, rc] = await Promise.all([
+      requisicaoPOST({acao:"listarMesas"}),
+      requisicaoPOST({acao:"listarComandas"})
+    ]);
+    if (!rm.sucesso) throw new Error(rm.mensagem);
+    if (!rc.sucesso) throw new Error(rc.mensagem);
+    const mesas = rm.dados || [];
+    lm.innerHTML = mesas.length ? mesas.map(m => {
+      const url = urlQrMesa(m);
+      const qr = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(url);
+      return `<article class="pedido-card panel" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <img src="${qr}" alt="QR Code ${escaparHTML(m.nome)}" width="112" height="112" style="border-radius:10px">
+        <div style="flex:1;min-width:220px"><strong>${escaparHTML(m.nome)}</strong>
+          <div class="muted">${m.comanda_aberta ? "Comanda aberta" : "Disponível para novo atendimento"}</div>
+          <div class="muted" style="word-break:break-all">${escaparHTML(url)}</div>
+          <div class="actions"><button class="btn btn-secondary btn-small" onclick="copiarTexto('${escaparAtributo(url)}')">Copiar link</button></div>
+        </div>
+      </article>`;
+    }).join("") : '<div class="empty">Nenhuma mesa cadastrada. Crie a primeira acima.</div>';
+
+    const comandas = rc.dados || [];
+    lc.innerHTML = comandas.length ? comandas.map(c => {
+      const pedidos = (c.pedidos || []).map(p => {
+        const itens = (p.itens || []).map(i => `${escaparHTML(i.quantidade)} × ${escaparHTML(i.produto)}`).join(", ");
+        return `<div class="pedido-item"><span><b>${escaparHTML(p.pedido_id)}</b> · ${escaparHTML(p.status)}<br><small>${itens}</small></span><strong>${moeda(p.total)}</strong></div>`;
+      }).join("");
+      return `<article class="panel pedido-card">
+        <div class="panel-header"><div><strong>${escaparHTML(c.mesa)}</strong><div class="muted">Aberta em ${dataHora(c.data_abertura)} · ${c.quantidade_pedidos} pedido(s)</div></div><span class="badge badge-ativo">ABERTA</span></div>
+        ${pedidos}<div class="pedido-total"><strong>Total da mesa: ${moeda(c.total)}</strong></div>
+        <div class="actions"><button class="btn btn-primary btn-small" onclick="fecharComandaUI('${escaparAtributo(c.comanda_id)}',${Number(c.total)||0})">Fechar comanda</button></div>
+      </article>`;
+    }).join("") : '<div class="empty">Nenhuma comanda aberta no momento.</div>';
+  } catch(e) {
+    lm.innerHTML = lc.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>';
+  }
+}
+function copiarTexto(txt) {
+  navigator.clipboard.writeText(txt).then(() => mostrarMensagem("Link copiado.", "success"))
+    .catch(() => mostrarMensagem("Não foi possível copiar o link neste navegador.", "error"));
+}
+async function fecharComandaUI(id,total) {
+  const dinheiro = Number(prompt("Valor pago em DINHEIRO (R$). Se não houver, informe 0:", "0") || 0);
+  const pix = Number(prompt("Valor pago em PIX (R$). Se não houver, informe 0:", "0") || 0);
+  const debito = Number(prompt("Valor pago em CARTÃO DE DÉBITO (R$). Se não houver, informe 0:", "0") || 0);
+  const credito = Number(prompt("Valor pago em CARTÃO DE CRÉDITO (R$). Se não houver, informe 0:", "0") || 0);
+  const pagamentos = [
+    {forma:"DINHEIRO",valor:dinheiro},{forma:"PIX",valor:pix},
+    {forma:"CARTÃO DE DÉBITO",valor:debito},{forma:"CARTÃO DE CRÉDITO",valor:credito}
+  ].filter(x => x.valor > 0);
+  const soma = pagamentos.reduce((a,x)=>a+x.valor,0);
+  if (Math.abs(soma-Number(total)) > 0.009) {
+    mostrarMensagem("Os pagamentos somam "+moeda(soma)+". O total da mesa é "+moeda(total)+".", "error");
+    return;
+  }
+  if (!pagamentos.length || !confirm("Confirmar fechamento da mesa no total de "+moeda(total)+"?")) return;
+  try {
+    const r = await requisicaoPOST({acao:"fecharComanda",comanda_id:id,pagamentos,responsavel:"Atendente"});
+    if (!r.sucesso) throw new Error(r.mensagem);
+    mostrarMensagem(r.mensagem, "success");
+    await Promise.all([carregarMesas(),carregarPedidos(),carregarProdutos(),carregarCaixa()]);
+  } catch(e) { mostrarMensagem(e.message, "error"); }
 }
 
 function renderizarEstoque(){
