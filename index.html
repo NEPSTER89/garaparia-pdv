@@ -607,6 +607,8 @@ td {
 @media print{body *{visibility:hidden!important}#areaImpressao,#areaImpressao *{visibility:visible!important}#areaImpressao{position:absolute;left:0;top:0;width:100%;padding:20px;color:#000;background:#fff}.no-print{display:none!important}}
 
 
+.home-action-buttons{display:flex;gap:10px;flex-wrap:wrap}.home-action-buttons .btn{min-width:190px}
+@media(max-width:600px){.home-action-buttons{display:grid;grid-template-columns:1fr}.home-action-buttons .btn{width:100%}}
 .search-result{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:1px solid var(--borda);background:#fff;border-radius:9px;padding:11px;margin-top:7px;color:var(--texto)}
 .search-result:hover{border-color:var(--dourado);background:#fffdf6}.search-result small{color:var(--cinza)}
 .kds-filtros{margin-top:12px}.kds-filtros button{flex:0 0 auto}
@@ -700,16 +702,12 @@ td {
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-header"><h3>Lançamento rápido</h3><span class="muted">Acesso direto às operações</span></div>
-        <div class="module-grid">
+      <div class="panel home-actions">
+        <div class="panel-header"><h3>Ações rápidas</h3><span class="muted">Atalhos para iniciar uma operação</span></div>
+        <div class="home-action-buttons">
           <button class="btn btn-primary" onclick="abrirSecao('vendas')">＋ Nova venda</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('cozinha')">🍽 Cozinha</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('mesas')">▦ Mesas abertas</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('estoque')">▤ Estoque</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('caixa')">＄ Caixa</button>
-          <button class="btn btn-secondary" onclick="abrirSecao('produtos')">▦ Produtos</button>
-          <button class="btn btn-secondary" onclick="validarSistema();abrirSecao('configuracoes')">⚙ Diagnóstico</button>
+          <button class="btn btn-secondary" onclick="abrirSecao('mesas')">＋ Abrir / consultar mesa</button>
+          <button class="btn btn-secondary" onclick="abrirCadastro()">＋ Cadastrar produto</button>
         </div>
       </div>
 
@@ -2062,13 +2060,15 @@ function renderizarCozinha(pedidos){
   el.innerHTML=grupos[st].length?grupos[st].map(p=>{
    const itens=(p.itens||[]).map(i=>`<div class="kds-item"><span>${Number(i.quantidade)}× ${escaparHTML(i.produto)}</span><strong>${moeda(i.total_item)}</strong></div>`).join('');
    const acao=st==='PENDENTE'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','EM_PREPARACAO').then(carregarCozinha)">Iniciar preparo</button>`:st==='EM_PREPARACAO'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','ENTREGUE').then(carregarCozinha)">Marcar entregue</button>`:'';
-   return `<article class="kds-card ${cl}"><h5>${escaparHTML(p.cliente_mesa||'Pedido QR')}</h5><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div>${itens}<div class="kds-actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acao}<button class="btn btn-danger btn-small" onclick="cancelarPedidoUI('${escaparAtributo(p.pedido_id)}')">Cancelar</button></div></article>`;
+   return `<article class="kds-card ${cl}"><h5>${escaparHTML(p.cliente_mesa||'Pedido QR')}</h5><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div>${itens}<div class="kds-actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acao}${['PENDENTE','EM_PREPARACAO'].includes(st)?`<button class="btn btn-danger btn-small" onclick="cancelarPedidoUI('${escaparAtributo(p.pedido_id)}')">Cancelar</button>`:''}</div></article>`;
   }).join(''):'<div class="empty">Nenhum pedido.</div>';
  });
 }
 function imprimirDocumento(titulo,corpo,w){
  if(!w){mostrarMensagem('Permita pop-ups para imprimir.','error');return;}
  w.document.open();w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escaparHTML(titulo)}</title><style>body{font-family:Arial,sans-serif;padding:22px;color:#111}h1{font-size:22px;margin:0 0 5px}h2{font-size:16px;margin:18px 0 8px}p{font-size:12px;margin:4px 0}.linha{display:flex;justify-content:space-between;border-bottom:1px dashed #bbb;padding:8px 0;font-size:14px}.total{font-size:20px;font-weight:bold;margin-top:18px;text-align:right}@media print{button{display:none}}
+.home-action-buttons{display:flex;gap:10px;flex-wrap:wrap}.home-action-buttons .btn{min-width:190px}
+@media(max-width:600px){.home-action-buttons{display:grid;grid-template-columns:1fr}.home-action-buttons .btn{width:100%}}
 .search-result{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:1px solid var(--borda);background:#fff;border-radius:9px;padding:11px;margin-top:7px;color:var(--texto)}
 .search-result:hover{border-color:var(--dourado);background:#fffdf6}.search-result small{color:var(--cinza)}
 .kds-filtros{margin-top:12px}.kds-filtros button{flex:0 0 auto}
