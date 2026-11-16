@@ -557,11 +557,27 @@ td {
 .mesa-card-info strong {display:block;color:var(--verde);font-size:13px}
 .mesa-card-info .muted {font-size:11px;margin:3px 0}
 .mesa-card-actions {display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
-#listaComandas {display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
-#listaComandas .panel {margin:0;padding:14px}
-#listaComandas .panel-header {margin-bottom:9px}
-#listaComandas .pedido-item {padding:7px 0;font-size:12px}
-#listaComandas .pedido-total {padding-top:8px;margin-top:7px}
+#listaComandas {display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+#listaComandas .comanda-card {margin:0;padding:15px;border:1px solid var(--borda);border-left:4px solid var(--verde);border-radius:12px;background:#fff;box-shadow:0 2px 8px #173c2a0a}
+#listaComandas .comanda-card.comanda-atualizada {animation:realceComanda 1.8s ease-out}
+#listaComandas .comanda-topo {display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+#listaComandas .comanda-mesa {font-size:18px;font-weight:800;color:var(--verde)}
+#listaComandas .comanda-resumo {font-size:11px;color:var(--cinza);margin-top:3px}
+#listaComandas .itens-comanda {display:grid;gap:7px}
+#listaComandas .item-comanda {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #e8eee9;border-radius:9px;background:#fbfdfb}
+#listaComandas .item-comanda-nome {font-size:13px;font-weight:700;color:#26352b;line-height:1.35}
+#listaComandas .item-comanda-qtd {display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding:5px 9px;border-radius:8px;background:#e7f1e9;color:#205b35;font-size:14px;font-weight:800}
+#listaComandas .item-comanda-meta {display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px}
+#listaComandas .status-item {font-size:10px;font-weight:800;padding:4px 7px;border-radius:20px;background:#fff2d8;color:#8a5700}
+#listaComandas .status-item.preparacao {background:#e8efff;color:#3156a4}
+#listaComandas .status-item.entregue {background:#e3f3e7;color:#216b39}
+#listaComandas .status-item.cancelado {background:#fbe8e6;color:#a52a22}
+#listaComandas .comanda-rodape {display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--borda);margin-top:12px;padding-top:11px}
+#listaComandas .comanda-total-label {font-size:11px;color:var(--cinza)}
+#listaComandas .comanda-total-valor {font-size:19px;font-weight:800;color:var(--verde)}
+#listaComandas .comanda-acoes {margin-top:10px;display:flex;justify-content:flex-end}
+#secao-mesas .mesas-refresh-info {font-size:11px;color:var(--cinza);font-weight:500}
+@keyframes realceComanda {0%{background:#fff8d9;border-color:#e6c85b}100%{background:#fff;border-color:var(--borda)}}
 .finance-entry {color:#247342;font-weight:600;background:#f0f8f1}
 .finance-exit {color:#b42318;font-weight:600;background:#fff1f0}
 .finance-entry td:nth-child(2),.finance-entry td:nth-child(5) {color:#247342;font-weight:700}
@@ -573,6 +589,22 @@ td {
 .payment-balance.ok {background:#e4f4e8;color:#216b39}
 .payment-balance.error {background:#fff0ee;color:#a52a22}
 @media(max-width:600px){#secao-mesas .inline-form{grid-template-columns:1fr}#listaMesas.mesa-grid,#listaComandas{grid-template-columns:1fr}.mesa-card img{width:62px;height:62px;flex-basis:62px}.payment-row{grid-template-columns:1fr 110px 30px}}
+
+
+/* Novos módulos operacionais */
+.kds-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.kds-col{background:#f2f5f2;border:1px solid var(--borda);border-radius:12px;padding:12px;min-height:180px}
+.kds-col h4{color:var(--verde);font-size:14px;margin:2px 2px 10px;display:flex;justify-content:space-between}
+.kds-card{background:#fff;border:1px solid var(--borda);border-left:4px solid var(--dourado);border-radius:10px;padding:12px;margin-bottom:10px}
+.kds-card.preparo{border-left-color:#5278c7}.kds-card.entregue{border-left-color:#27804a}
+.kds-card h5{font-size:14px;color:var(--verde);margin-bottom:5px}
+.kds-item{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #edf0ed;font-size:12px}
+.kds-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.alerta-estoque{border-left:4px solid #d69b22}.alerta-estoque.esgotado{border-left-color:#b42318;background:#fff7f6}
+.turno-status{padding:12px;border-radius:9px;background:#f2f5f2;margin-bottom:12px;font-size:13px}
+.turno-status.aberto{background:#e7f4e9;color:#23633a}.turno-status.fechado{background:#fff3df;color:#795719}
+@media(max-width:850px){.kds-grid{grid-template-columns:1fr}}
+@media print{body *{visibility:hidden!important}#areaImpressao,#areaImpressao *{visibility:visible!important}#areaImpressao{position:absolute;left:0;top:0;width:100%;padding:20px;color:#000;background:#fff}.no-print{display:none!important}}
 
 </style>
 </head>
@@ -592,6 +624,7 @@ td {
       <button onclick="abrirSecao('produtos',this)">▦ Produtos</button>
       <button onclick="abrirSecao('vendas',this)">▣ Vendas</button>
       <button onclick="abrirSecao('pedidos',this)">♧ Pedidos</button>
+      <button onclick="abrirSecao('cozinha',this)">🍽 Cozinha</button>
       <button onclick="abrirSecao('mesas',this)">▦ Mesas / Comandas</button>
       <button onclick="abrirSecao('estoque',this)">▤ Estoque</button>
       <button onclick="abrirSecao('caixa',this)">＄ Caixa</button>
@@ -669,6 +702,18 @@ td {
           <button class="btn btn-secondary" onclick="abrirSecao('caixa')">＄ Caixa</button>
           <button class="btn btn-secondary" onclick="abrirSecao('produtos')">▦ Produtos</button>
           <button class="btn btn-secondary" onclick="validarSistema();abrirSecao('configuracoes')">⚙ Diagnóstico</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Indicadores do dia</h3><button class="btn btn-secondary" onclick="carregarIndicadores()">↻ Atualizar</button></div>
+        <div class="module-grid">
+          <div class="module-card"><small>Faturamento hoje</small><strong id="indFaturamento">R$ 0,00</strong></div>
+          <div class="module-card"><small>Pedidos concluídos</small><strong id="indPedidos">0</strong></div>
+          <div class="module-card"><small>Ticket médio</small><strong id="indTicket">R$ 0,00</strong></div>
+          <div class="module-card"><small>Produto mais vendido</small><strong id="indTopProduto" style="font-size:16px">—</strong></div>
+          <div class="module-card"><small>Entradas / saídas</small><strong id="indMovimento" style="font-size:16px">R$ 0,00 / R$ 0,00</strong></div>
+          <div class="module-card"><small>Saldo financeiro</small><strong id="indSaldo">R$ 0,00</strong></div>
         </div>
       </div>
 
@@ -772,11 +817,23 @@ td {
         <div class="filters"><select id="filtroPedidos" onchange="carregarPedidos()"><option value="">Todos os status</option><option value="PENDENTE">Pendentes</option><option value="EM_PREPARACAO">Em preparação</option><option value="CONCLUIDO">Concluídos</option><option value="CANCELADO">Cancelados</option></select></div>
         <div id="listaPedidos"><div class="empty">Carregando pedidos...</div></div>
       </div>
+      <div class="panel"><div class="panel-header"><h3>Histórico de cancelamentos</h3><button class="btn btn-secondary" onclick="carregarHistoricoCancelamentos()">↻ Atualizar</button></div><div id="listaCancelamentos"><div class="empty">Carregando histórico...</div></div></div>
     </section>
+    <section id="secao-cozinha" class="secao">
+      <div class="panel"><div class="panel-header"><h3>Painel de preparo</h3><div><span class="muted" id="statusCozinha">Atualização automática a cada 5 segundos</span> <button class="btn btn-secondary" onclick="carregarCozinha()">↻ Atualizar</button></div></div>
+        <p class="muted" style="margin-bottom:14px">Pedidos do cardápio QR e das mesas. Pedidos são atualizados automaticamente enquanto esta tela estiver aberta.</p>
+        <div class="kds-grid">
+          <div class="kds-col"><h4>Novos <span id="kdsQtdNovos">0</span></h4><div id="kdsNovos"></div></div>
+          <div class="kds-col"><h4>Em preparo <span id="kdsQtdPreparo">0</span></h4><div id="kdsPreparo"></div></div>
+          <div class="kds-col"><h4>Entregues <span id="kdsQtdEntregues">0</span></h4><div id="kdsEntregues"></div></div>
+        </div>
+      </div>
+    </section>
+
     <section id="secao-mesas" class="secao">
       <div class="panel">
-        <div class="panel-header"><h3>Comandas abertas</h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar</button></div>
-        <p class="muted">Pedidos de cada mesa reunidos em uma única conta. Confira os pedidos e feche a mesa pelo valor total.</p>
+        <div class="panel-header"><h3>Comandas abertas <span class="mesas-refresh-info" id="statusAtualizacaoComandas">· atualização automática a cada 5 segundos</span></h3><button class="btn btn-secondary" onclick="carregarMesas()">↻ Atualizar agora</button></div>
+        <p class="muted">Acompanhe os itens solicitados, quantidades e andamento do preparo por mesa.</p>
         <div id="listaComandas"><div class="empty">Carregando comandas...</div></div>
       </div>
       <div class="panel">
@@ -804,10 +861,16 @@ td {
           <div class="form-group full"><button class="btn btn-primary" type="submit">Registrar movimentação</button></div>
         </form>
       </div>
+      <div class="panel"><div class="panel-header"><h3>Reposição inteligente</h3><button class="btn btn-secondary" onclick="carregarEstoqueInteligente()">↻ Analisar estoque</button></div><p class="muted" style="margin-bottom:12px">Estimativa baseada nas vendas concluídas dos últimos 30 dias; a sugestão não altera o estoque automaticamente.</p><div id="estoqueInteligente"><div class="empty">Clique em Analisar estoque.</div></div></div>
       <div class="panel"><div class="panel-header"><h3>Posição atual</h3><button class="btn btn-secondary" onclick="renderizarEstoque()">↻ Atualizar</button></div><div id="tabelaEstoque"></div></div>
       <div class="panel"><div class="panel-header"><h3>Últimas movimentações</h3><button class="btn btn-secondary" onclick="carregarMovimentacoes()">↻ Atualizar</button></div><div id="listaMovimentacoes"></div></div>
     </section>
     <section id="secao-caixa" class="secao">
+      <div class="panel"><div class="panel-header"><h3>Abertura e fechamento do caixa</h3><button class="btn btn-secondary" onclick="carregarTurnoCaixa()">↻ Atualizar turno</button></div>
+        <div id="statusTurnoCaixa" class="turno-status">Consultando situação do caixa...</div>
+        <div class="inline-form" id="formAbrirTurno"><div class="form-group"><label>Valor inicial em dinheiro (R$)</label><input id="valorInicialCaixa" type="number" min="0" step="0.01" value="0"></div><div class="form-group"><label>&nbsp;</label><button class="btn btn-primary" onclick="abrirTurnoCaixaUI()">Abrir caixa</button></div></div>
+        <div class="inline-form" id="formFecharTurno" style="display:none"><div class="form-group"><label>Dinheiro contado no caixa (R$)</label><input id="valorContadoCaixa" type="number" min="0" step="0.01"></div><div class="form-group"><label>&nbsp;</label><button class="btn btn-danger" onclick="fecharTurnoCaixaUI()">Conferir e fechar caixa</button></div></div>
+      </div>
       <div class="module-grid"><div class="module-card"><small>Entradas</small><strong id="caixaEntradas">R$ 0,00</strong></div><div class="module-card"><small>Saídas</small><strong id="caixaSaidas">R$ 0,00</strong></div><div class="module-card"><small>Saldo</small><strong id="caixaSaldo">R$ 0,00</strong></div></div>
       <div class="panel"><div class="panel-header"><h3>Novo lançamento manual</h3></div>
         <form class="inline-form" onsubmit="registrarLancamento(event)">
@@ -952,6 +1015,7 @@ let pagamentosVenda = [{forma:"DINHEIRO",valor:""}];
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarProdutos();
+  carregarIndicadores();
   renderizarPagamentos();
   const hoje = new Date();
   const iso = new Date(hoje.getTime()-hoje.getTimezoneOffset()*60000).toISOString().slice(0,10);
@@ -1423,11 +1487,13 @@ function abrirSecao(secao, botao) {
   document.getElementById("subtituloPagina").textContent=titulos[secao][1];
   document.getElementById("sidebar").classList.remove("mobile-open");
   if(secao==="vendas")carregarProdutosVenda();
-  if(secao==="pedidos")carregarPedidos();
+  if(secao==="pedidos"){carregarPedidos();carregarHistoricoCancelamentos();}
+  if(secao==="cozinha")carregarCozinha();
   if(secao==="mesas")carregarMesas();
-  if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();}
-  if(secao==="caixa")carregarCaixa();
+  if(secao==="estoque"){renderizarEstoque();carregarMovimentacoes();carregarEstoqueInteligente();}
+  if(secao==="caixa"){carregarCaixa();carregarTurnoCaixa();}
   if(secao==="relatorios")carregarRelatorios();
+  if(secao==="inicio")carregarIndicadores();
   if(secao==="configuracoes")validarSistema();
 
 }
@@ -1712,7 +1778,7 @@ async function carregarPedidos(){
       const concluir=(p.origem==='QR_CODE' && !p.comanda_id && ['PENDENTE','EM_PREPARACAO'].includes(p.status))?`<button class="btn btn-primary btn-small" onclick="concluirPedidoUI('${escaparAtributo(p.pedido_id)}','${escaparAtributo(p.forma_pagamento||'OUTRO')}',${Number(p.total)||0})">Concluir pedido</button>`:'';
       const entregar=(p.origem==='QR_CODE' && p.comanda_id && ['PENDENTE','EM_PREPARACAO'].includes(p.status))?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','ENTREGUE')">Marcar entregue</button>`:'';
       const cancelar=['PENDENTE','EM_PREPARACAO'].includes(p.status)?`<button class="btn btn-danger btn-small" onclick="cancelarPedidoUI('${escaparAtributo(p.pedido_id)}')">Cancelar</button>`:'';
-      return `<article class="panel pedido-card"><div class="panel-header"><div><strong>${escaparHTML(p.cliente_mesa||'Cliente')}</strong><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div></div><span class="badge ${p.status==='CONCLUIDO'?'badge-ativo':p.status==='CANCELADO'?'badge-inativo':''}">${escaparHTML(p.status)}</span></div><div class="muted">Pedido: ${escaparHTML(p.pedido_id)}</div>${itens}<div class="pedido-total"><strong>Total: ${moeda(p.total)}</strong></div><div class="actions">${acoes}${concluir}${entregar}${cancelar}</div></article>`;
+      return `<article class="panel pedido-card"><div class="panel-header"><div><strong>${escaparHTML(p.cliente_mesa||'Cliente')}</strong><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div></div><span class="badge ${p.status==='CONCLUIDO'?'badge-ativo':p.status==='CANCELADO'?'badge-inativo':''}">${escaparHTML(p.status)}</span></div><div class="muted">Pedido: ${escaparHTML(p.pedido_id)}</div>${itens}<div class="pedido-total"><strong>Total: ${moeda(p.total)}</strong></div><div class="actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acoes}${concluir}${entregar}${cancelar}</div></article>`;
     }).join('');
   }catch(e){alvo.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
 }
@@ -1726,8 +1792,11 @@ async function concluirPedidoUI(id,forma,total){
   catch(e){mostrarMensagem(e.message,'error');}
 }
 async function cancelarPedidoUI(id){
-  if(!confirm('Deseja realmente cancelar este pedido?'))return;
-  try{const r=await requisicaoPOST({acao:'cancelarPedido',pedido_id:id,observacao:'Cancelado pelo atendimento'});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await carregarPedidos();}
+  const motivo=prompt('Informe o motivo do cancelamento:','Solicitação do cliente');
+  if(motivo===null)return;
+  if(!motivo.trim()){mostrarMensagem('Informe o motivo do cancelamento.','error');return;}
+  if(!confirm('Confirmar cancelamento deste pedido?'))return;
+  try{const r=await requisicaoPOST({acao:'cancelarPedido',pedido_id:id,observacao:motivo.trim()});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem(r.mensagem,'success');await Promise.all([carregarPedidos(),carregarHistoricoCancelamentos()]);}
   catch(e){mostrarMensagem(e.message,'error');}
 }
 
@@ -1754,14 +1823,14 @@ async function carregarMesas() {
   const lm = document.getElementById("listaMesas");
   const lc = document.getElementById("listaComandas");
   if (!lm || !lc) return;
-  lm.innerHTML = '<div class="empty">Carregando mesas...</div>';
-  lc.innerHTML = '<div class="empty">Carregando comandas...</div>';
+  if (!lm.dataset.carregada) lm.innerHTML = '<div class="empty">Carregando mesas...</div>';
+  if (!lc.dataset.carregada) lc.innerHTML = '<div class="empty">Carregando comandas...</div>';
   try {
     const [rm, rc] = await Promise.all([requisicaoPOST({acao:"listarMesas"}),requisicaoPOST({acao:"listarComandas"})]);
     if (!rm.sucesso) throw new Error(rm.mensagem);
     if (!rc.sucesso) throw new Error(rc.mensagem);
     const mesas = rm.dados || [];
-    lm.innerHTML = mesas.length ? mesas.map(m => {
+    const htmlMesas = mesas.length ? mesas.map(m => {
       const url = urlQrMesa(m);
       const qr = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + encodeURIComponent(url);
       return `<article class="mesa-card">
@@ -1772,21 +1841,77 @@ async function carregarMesas() {
         </div>
       </article>`;
     }).join("") : '<div class="empty">Nenhuma mesa cadastrada. Crie a primeira acima.</div>';
-
-    const comandas = rc.dados || [];
-    lc.innerHTML = comandas.length ? comandas.map(c => {
-      const pedidos = (c.pedidos || []).map(p => {
-        const itens = (p.itens || []).map(i => `${escaparHTML(i.quantidade)} × ${escaparHTML(i.produto)}`).join(", ");
-        return `<div class="pedido-item"><span><b>${escaparHTML(p.pedido_id)}</b> · ${escaparHTML(p.status)}<br><small>${itens}</small></span><strong>${moeda(p.total)}</strong></div>`;
-      }).join("");
-      return `<article class="panel pedido-card">
-        <div class="panel-header"><div><strong>${escaparHTML(c.mesa)}</strong><div class="muted">${dataHora(c.data_abertura)} · ${c.quantidade_pedidos} pedido(s)</div></div><span class="badge badge-ativo">ABERTA</span></div>
-        ${pedidos}<div class="pedido-total"><strong>Total da mesa: ${moeda(c.total)}</strong></div>
-        <div class="actions"><button class="btn btn-primary btn-small" onclick="fecharComandaUI('${escaparAtributo(c.comanda_id)}',${Number(c.total)||0},'${escaparAtributo(c.mesa)}')">Fechar comanda</button></div>
-      </article>`;
-    }).join("") : '<div class="empty">Nenhuma comanda aberta no momento.</div>';
-  } catch(e) { lm.innerHTML = lc.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>'; }
+    if (lm.innerHTML !== htmlMesas) lm.innerHTML = htmlMesas;
+    lm.dataset.carregada = "1";
+    renderizarComandas(rc.dados || []);
+  } catch(e) {
+    if (!lm.dataset.carregada) lm.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>';
+    if (!lc.dataset.carregada) lc.innerHTML = '<div class="empty">'+escaparHTML(e.message)+'</div>';
+    const st=document.getElementById("statusAtualizacaoComandas");if(st)st.textContent="· falha ao atualizar; tente novamente";
+  }
 }
+
+let assinaturasComandas = {};
+function classeStatusItem(status) {
+  const s=String(status||"").toUpperCase();
+  if(s==="ENTREGUE"||s==="CONCLUIDO")return "entregue";
+  if(s==="EM_PREPARACAO")return "preparacao";
+  if(s==="CANCELADO")return "cancelado";
+  return "pendente";
+}
+function nomeStatusItem(status) {
+  const s=String(status||"").toUpperCase();
+  return ({PENDENTE:"PENDENTE",EM_PREPARACAO:"EM PREPARO",ENTREGUE:"ENTREGUE",CONCLUIDO:"CONCLUÍDO",CANCELADO:"CANCELADO"})[s]||s;
+}
+function renderizarComandas(comandas) {
+  const lc=document.getElementById("listaComandas");if(!lc)return;
+  const novasAssinaturas={};
+  const html=comandas.length?comandas.map(c=>{
+    const itensAgrupados={};
+    (c.pedidos||[]).forEach(p=>{
+      (p.itens||[]).forEach(i=>{
+        const nome=String(i.produto||"Item");
+        const status=String(p.status||"PENDENTE").toUpperCase();
+        const chave=nome.toLocaleLowerCase("pt-BR")+"|"+status;
+        if(!itensAgrupados[chave])itensAgrupados[chave]={produto:nome,quantidade:0,status};
+        itensAgrupados[chave].quantidade+=Number(i.quantidade)||0;
+      });
+    });
+    const itens=Object.values(itensAgrupados).sort((a,b)=>a.produto.localeCompare(b.produto,"pt-BR"));
+    const assinatura=JSON.stringify({itens,total:Number(c.total)||0,pedidos:c.quantidade_pedidos});
+    novasAssinaturas[c.comanda_id]=assinatura;
+    const mudou=assinaturasComandas[c.comanda_id]!==undefined&&assinaturasComandas[c.comanda_id]!==assinatura;
+    const itensHtml=itens.map(i=>`<div class="item-comanda">
+      <div><div class="item-comanda-nome">${escaparHTML(i.produto)}</div><div class="item-comanda-meta"><span class="status-item ${classeStatusItem(i.status)}">${nomeStatusItem(i.status)}</span></div></div>
+      <span class="item-comanda-qtd">${Number(i.quantidade)}×</span>
+    </div>`).join("");
+    return `<article class="comanda-card ${mudou?'comanda-atualizada':''}">
+      <div class="comanda-topo"><div><div class="comanda-mesa">${escaparHTML(c.mesa)}</div><div class="comanda-resumo">${c.quantidade_pedidos||0} pedido(s) · aberta em ${dataHora(c.data_abertura)}</div></div><span class="badge badge-ativo">ABERTA</span></div>
+      <div class="itens-comanda">${itensHtml||'<div class="empty">Nenhum item nesta comanda.</div>'}</div>
+      <div class="comanda-rodape"><div><div class="comanda-total-label">TOTAL DA MESA</div><div class="comanda-total-valor">${moeda(c.total)}</div></div><div class="comanda-acoes"><button class="btn btn-secondary btn-small" onclick="imprimirComanda('${escaparAtributo(c.comanda_id)}')">Imprimir</button><button class="btn btn-primary btn-small" onclick="fecharComandaUI('${escaparAtributo(c.comanda_id)}',${Number(c.total)||0},'${escaparAtributo(c.mesa)}')">Fechar comanda</button></div></div>
+    </article>`;
+  }).join(""):'<div class="empty">Nenhuma comanda aberta no momento.</div>';
+  const mudouLista=JSON.stringify(assinaturasComandas)!==JSON.stringify(novasAssinaturas);
+  if(mudouLista||!lc.dataset.carregada){lc.innerHTML=html;lc.dataset.carregada="1";}
+  assinaturasComandas=novasAssinaturas;
+  const st=document.getElementById("statusAtualizacaoComandas");if(st)st.textContent="· atualizado às "+new Date().toLocaleTimeString("pt-BR");
+}
+let atualizacaoComandasEmAndamento=false;
+async function atualizarComandasAutomaticamente(){
+  const secao=document.getElementById("secao-mesas");
+  if(!secao||!secao.classList.contains("active")||document.hidden||atualizacaoComandasEmAndamento)return;
+  atualizacaoComandasEmAndamento=true;
+  try{
+    const r=await requisicaoPOST({acao:"listarComandas"});
+    if(!r.sucesso)throw new Error(r.mensagem);
+    renderizarComandas(r.dados||[]);
+  }catch(e){const st=document.getElementById("statusAtualizacaoComandas");if(st)st.textContent="· aguardando conexão para atualizar";}
+  finally{atualizacaoComandasEmAndamento=false;}
+}
+setInterval(atualizarComandasAutomaticamente,5000);
+setInterval(()=>{const s=document.getElementById('secao-cozinha');if(s&&s.classList.contains('active')&&!document.hidden)carregarCozinha();},5000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)atualizarComandasAutomaticamente();});
+
 function copiarTexto(txt) {
   navigator.clipboard.writeText(txt).then(() => mostrarMensagem("Link copiado.", "success"))
     .catch(() => mostrarMensagem("Não foi possível copiar o link neste navegador.", "error"));
@@ -1877,6 +2002,117 @@ async function carregarRelatorios(){
  }catch(e){mostrarMensagem(e.message,'error');}
 }
 
+
+// ======================================================
+// 1) PAINEL DA COZINHA E IMPRESSÃO
+// ======================================================
+let cozinhaEmAtualizacao=false;
+async function carregarCozinha(){
+ const status=document.getElementById('statusCozinha');
+ if(cozinhaEmAtualizacao)return;cozinhaEmAtualizacao=true;
+ try{
+  const r=await requisicaoPOST({acao:'listarPedidosCozinha'});if(!r.sucesso)throw new Error(r.mensagem);
+  renderizarCozinha(r.dados||[]);
+  if(status)status.textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR');
+ }catch(e){if(status)status.textContent='Falha ao atualizar';}
+ finally{cozinhaEmAtualizacao=false;}
+}
+function renderizarCozinha(pedidos){
+ const grupos={PENDENTE:[],EM_PREPARACAO:[],ENTREGUE:[]};
+ pedidos.forEach(p=>{if(grupos[p.status])grupos[p.status].push(p);});
+ const cfg=[['PENDENTE','kdsNovos','kdsQtdNovos','novo'],['EM_PREPARACAO','kdsPreparo','kdsQtdPreparo','preparo'],['ENTREGUE','kdsEntregues','kdsQtdEntregues','entregue']];
+ cfg.forEach(([st,id,qid,cl])=>{
+  const el=document.getElementById(id);document.getElementById(qid).textContent=grupos[st].length;
+  el.innerHTML=grupos[st].length?grupos[st].map(p=>{
+   const itens=(p.itens||[]).map(i=>`<div class="kds-item"><span>${Number(i.quantidade)}× ${escaparHTML(i.produto)}</span><strong>${moeda(i.total_item)}</strong></div>`).join('');
+   const acao=st==='PENDENTE'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','EM_PREPARACAO').then(carregarCozinha)">Iniciar preparo</button>`:st==='EM_PREPARACAO'?`<button class="btn btn-primary btn-small" onclick="mudarStatusPedido('${escaparAtributo(p.pedido_id)}','ENTREGUE').then(carregarCozinha)">Marcar entregue</button>`:'';
+   return `<article class="kds-card ${cl}"><h5>${escaparHTML(p.cliente_mesa||'Pedido QR')}</h5><div class="muted">${dataHora(p.data_hora)} · ${escaparHTML(p.origem)}</div>${itens}<div class="kds-actions"><button class="btn btn-secondary btn-small" onclick="imprimirPedido('${escaparAtributo(p.pedido_id)}')">Imprimir</button>${acao}</div></article>`;
+  }).join(''):'<div class="empty">Nenhum pedido.</div>';
+ });
+}
+function imprimirDocumento(titulo,corpo,w){
+ if(!w){mostrarMensagem('Permita pop-ups para imprimir.','error');return;}
+ w.document.open();w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escaparHTML(titulo)}</title><style>body{font-family:Arial,sans-serif;padding:22px;color:#111}h1{font-size:22px;margin:0 0 5px}h2{font-size:16px;margin:18px 0 8px}p{font-size:12px;margin:4px 0}.linha{display:flex;justify-content:space-between;border-bottom:1px dashed #bbb;padding:8px 0;font-size:14px}.total{font-size:20px;font-weight:bold;margin-top:18px;text-align:right}@media print{button{display:none}}</style></head><body>${corpo}<script>window.onload=()=>{window.print();};<\/script></body></html>`);w.document.close();
+}
+async function imprimirPedido(id){
+ const w=window.open('','_blank','width=800,height=700');
+ if(!w){mostrarMensagem('Permita pop-ups para imprimir.','error');return;}
+ try{const r=await requisicaoPOST({acao:'listarPedidos'});if(!r.sucesso)throw new Error(r.mensagem);const p=(r.dados||[]).find(x=>x.pedido_id===id);if(!p)throw new Error('Pedido não encontrado.');
+ const corpo=`<h1>EMUNÁH · PEDIDO</h1><p><b>${escaparHTML(p.cliente_mesa||'Cliente')}</b></p><p>${dataHora(p.data_hora)} · ${escaparHTML(p.status)}</p><hr>${(p.itens||[]).map(i=>`<div class="linha"><span>${Number(i.quantidade)}× ${escaparHTML(i.produto)}</span><b>${moeda(i.total_item)}</b></div>`).join('')}<div class="total">TOTAL ${moeda(p.total)}</div><p>Pedido: ${escaparHTML(p.pedido_id)}</p>`;
+ imprimirDocumento('Pedido EMUNÁH',corpo,w);
+ }catch(e){w.close();mostrarMensagem(e.message,'error');}
+}
+async function imprimirComanda(id){
+ const w=window.open('','_blank','width=800,height=700');
+ if(!w){mostrarMensagem('Permita pop-ups para imprimir.','error');return;}
+ try{const r=await requisicaoPOST({acao:'listarComandas'});if(!r.sucesso)throw new Error(r.mensagem);const c=(r.dados||[]).find(x=>x.comanda_id===id);if(!c)throw new Error('Comanda não encontrada.');
+ const corpo=`<h1>EMUNÁH · CONFERÊNCIA DE MESA</h1><p><b>${escaparHTML(c.mesa)}</b> · ${dataHora(c.data_abertura)}</p><hr>${(c.pedidos||[]).filter(p=>p.status!=='CANCELADO').map(p=>`<h2>${escaparHTML(p.status)} · ${dataHora(p.data_hora)}</h2>${(p.itens||[]).map(i=>`<div class="linha"><span>${Number(i.quantidade)}× ${escaparHTML(i.produto)}</span><b>${moeda(i.total_item)}</b></div>`).join('')}`).join('')}<div class="total">TOTAL ${moeda(c.total)}</div>`;
+ imprimirDocumento('Comanda EMUNÁH',corpo,w);
+ }catch(e){w.close();mostrarMensagem(e.message,'error');}
+}
+
+// ======================================================
+// 2) ABERTURA E FECHAMENTO DO CAIXA
+// ======================================================
+async function carregarTurnoCaixa(){
+ const el=document.getElementById('statusTurnoCaixa');if(!el)return;
+ try{const r=await requisicaoPOST({acao:'consultarCaixaTurno'});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};
+  document.getElementById('formAbrirTurno').style.display=d.aberto?'none':'grid';document.getElementById('formFecharTurno').style.display=d.aberto?'grid':'none';
+  if(d.aberto){el.className='turno-status aberto';el.innerHTML=`<b>CAIXA ABERTO</b> · Desde ${dataHora(d.data_abertura)}<br>Valor inicial: ${moeda(d.valor_inicial)} · Entradas em dinheiro: ${moeda(d.entradas_dinheiro)} · Saídas em dinheiro: ${moeda(d.saidas_dinheiro)}<br><b>Dinheiro esperado: ${moeda(d.valor_esperado)}</b>`;document.getElementById('valorContadoCaixa').value=Number(d.valor_esperado).toFixed(2);}
+  else{el.className='turno-status fechado';el.textContent='CAIXA FECHADO · Abra um turno para iniciar a conferência diária.';}
+ }catch(e){el.className='turno-status fechado';el.textContent=e.message;}
+}
+async function abrirTurnoCaixaUI(){
+ const valor=Number(document.getElementById('valorInicialCaixa').value||0);
+ try{const r=await requisicaoPOST({acao:'abrirCaixaTurno',valor_inicial:valor,responsavel:'Administrador'});if(!r.sucesso)throw new Error(r.mensagem);mostrarMensagem('Caixa aberto com sucesso.','success');await carregarTurnoCaixa();}
+ catch(e){mostrarMensagem(e.message,'error');}
+}
+async function fecharTurnoCaixaUI(){
+ const valor=Number(document.getElementById('valorContadoCaixa').value);
+ if(!Number.isFinite(valor)||valor<0){mostrarMensagem('Informe o valor contado.','error');return;}
+ if(!confirm('Confirma o fechamento do caixa com '+moeda(valor)+' em dinheiro contado?'))return;
+ try{const r=await requisicaoPOST({acao:'fecharCaixaTurno',valor_contado:valor,responsavel:'Administrador'});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};mostrarMensagem('Caixa fechado. Diferença: '+moeda(d.diferenca||0),'success');await carregarTurnoCaixa();}
+ catch(e){mostrarMensagem(e.message,'error');}
+}
+
+// ======================================================
+// 3) ESTOQUE INTELIGENTE
+// ======================================================
+async function carregarEstoqueInteligente(){
+ const el=document.getElementById('estoqueInteligente');if(!el)return;el.innerHTML='<div class="empty">Analisando vendas e estoque...</div>';
+ try{const r=await requisicaoPOST({acao:'listarEstoqueInteligente'});if(!r.sucesso)throw new Error(r.mensagem);const lista=r.dados||[];
+  if(!lista.length){el.innerHTML='<div class="empty">Nenhum produto com controle de estoque.</div>';return;}
+  el.innerHTML=tabelaHTML(['Produto','Estoque','Mínimo','Vendido 30 dias','Cobertura','Sugestão de reposição'],lista.map(p=>{
+   const cl=p.situacao==='ESGOTADO'?'esgotado':p.situacao==='NORMAL'?'':'alerta-estoque';
+   const cobertura=p.cobertura_dias===null?'—':p.cobertura_dias+' dias';
+   const situacao=p.situacao==='ESGOTADO'?'ESGOTADO':p.situacao==='ABAIXO_DO_MINIMO'?'ABAIXO DO MÍNIMO':p.situacao==='REPOR_EM_BREVE'?'REPOR EM BREVE':'NORMAL';
+   return `<tr class="${cl}"><td><b>${escaparHTML(p.nome)}</b><div class="muted">${situacao}</div></td><td>${p.estoque_atual}</td><td>${p.estoque_minimo}</td><td>${p.vendidos_30_dias}</td><td>${cobertura}</td><td><b>${p.sugestao_reposicao} un.</b></td></tr>`;
+  }));
+ }catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
+}
+
+// ======================================================
+// 4) HISTÓRICO DE CANCELAMENTOS
+// ======================================================
+async function carregarHistoricoCancelamentos(){
+ const el=document.getElementById('listaCancelamentos');if(!el)return;
+ try{const r=await requisicaoPOST({acao:'listarHistoricoCancelamentos',limite:200});if(!r.sucesso)throw new Error(r.mensagem);const lista=r.dados||[];
+  el.innerHTML=lista.length?tabelaHTML(['Data','Pedido / Cliente','Origem','Valor','Motivo'],lista.map(x=>`<tr class="finance-exit"><td>${dataHora(x.data_hora)}</td><td>${escaparHTML(x.cliente_mesa||x.pedido_id)}<div class="muted">${escaparHTML(x.pedido_id)}</div></td><td>${escaparHTML(x.origem)}</td><td>${moeda(x.valor)}</td><td>${escaparHTML(x.motivo)}</td></tr>`)):'<div class="empty">Nenhum cancelamento registrado.</div>';
+ }catch(e){el.innerHTML='<div class="empty">'+escaparHTML(e.message)+'</div>';}
+}
+
+// ======================================================
+// 5) INDICADORES GERENCIAIS
+// ======================================================
+async function carregarIndicadores(){
+ try{const r=await requisicaoPOST({acao:'obterIndicadores'});if(!r.sucesso)throw new Error(r.mensagem);const d=r.dados||{};
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('indFaturamento',moeda(d.faturamento));set('indPedidos',d.pedidos||0);set('indTicket',moeda(d.ticket_medio));
+  set('indTopProduto',d.produto_mais_vendido?d.produto_mais_vendido.produto:'—');
+  set('indMovimento',moeda(d.entradas)+' / '+moeda(d.saidas));set('indSaldo',moeda(d.saldo));
+ }catch(e){console.warn('Indicadores:',e.message);}
+}
+
 async function validarSistema(){
  const el=document.getElementById('diagnosticoSistema');el.innerHTML='Verificando conexão e estrutura...';
  try{const [c,e]=await Promise.all([requisicaoGET('testarConexao'),requisicaoGET('validarEstrutura')]);if(!c.sucesso)throw new Error(c.mensagem);if(!e.sucesso)throw new Error(e.mensagem);el.innerHTML=`<div class="notice"><strong>Conexão confirmada.</strong><br>Planilha: ${escaparHTML(c.dados?.planilha||'Conectada')}<br>Estrutura: validada.<br>Abas e cabeçalhos preservados.</div>`;atualizarStatus(true);}catch(err){el.innerHTML='<div class="empty">Falha no diagnóstico: '+escaparHTML(err.message)+'</div>';atualizarStatus(false);}
@@ -1893,4 +2129,3 @@ function limparVendaSemConfirmar() {
 
 </body>
 </html>
-
