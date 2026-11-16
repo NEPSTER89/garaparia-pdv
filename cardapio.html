@@ -811,6 +811,7 @@ button {cursor:pointer}
       <span id="modalTotal">R$ 0,00</span>
     </div>
 
+    <div id="mesaAviso" class="notice" style="display:none"></div>
     <form class="form" id="orderForm" onsubmit="enviarPedido(event)">
       <label>
         Seu nome ou número da mesa
@@ -840,6 +841,11 @@ button {cursor:pointer}
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwethJCpjNczjP0JJzYcdEwOVOCNgwN-Jnb9tLitb26_Cx4_RegzPEqyEtffytbBXFj_Q/exec";
+const parametrosMesa = new URLSearchParams(window.location.search);
+const mesaId = parametrosMesa.get("mesa") || "";
+const mesaToken = parametrosMesa.get("token") || "";
+let mesaValidada = !mesaId && !mesaToken;
+let nomeMesa = "";
 
 const money = n => Number(n||0).toLocaleString("pt-BR",{
   style:"currency",
@@ -1243,10 +1249,43 @@ function renderCarrinho() {
     money(totalCarrinho());
 }
 
+async function validarContextoMesa() {
+  if (!mesaId && !mesaToken) return;
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Validando mesa...";
+  try {
+    if (!mesaId || !mesaToken) throw new Error("QR Code incompleto.");
+    const url = API_URL + "?acao=validarMesa&mesa=" + encodeURIComponent(mesaId) + "&token=" + encodeURIComponent(mesaToken);
+    const resp = await fetch(url, {cache:"no-store"});
+    const data = await resp.json();
+    if (!data.sucesso) throw new Error(data.mensagem || "Mesa não autorizada.");
+    mesaValidada = true;
+    nomeMesa = data.dados.mesa;
+    const aviso = document.getElementById("mesaAviso");
+    aviso.style.display = "block";
+    aviso.textContent = "Você está fazendo um pedido para " + nomeMesa + ". Todos os pedidos desta mesa serão reunidos na mesma comanda.";
+    document.getElementById("customer").placeholder = "Seu nome";
+  } catch (err) {
+    mesaValidada = false;
+    const aviso = document.getElementById("mesaAviso");
+    aviso.style.display = "block";
+    aviso.textContent = "Não foi possível validar esta mesa: " + err.message + " Solicite ajuda ao atendente.";
+    mostrarToast(err.message);
+  } finally {
+    btn.disabled = !mesaValidada;
+    btn.textContent = "Enviar pedido";
+  }
+}
+
 async function enviarPedido(e) {
   e.preventDefault();
 
   if (enviando) return;
+  if (!mesaValidada) {
+    mostrarToast("Mesa não validada. Não é possível enviar o pedido.");
+    return;
+  }
 
   const itens = itensCarrinho();
 
@@ -1272,6 +1311,8 @@ async function enviarPedido(e) {
     cliente:document.getElementById("customer").value.trim(),
     observacao:document.getElementById("observation").value.trim(),
     formaPagamento:"A DEFINIR",
+    mesa_id:mesaId || "",
+    mesa_token:mesaToken || "",
     itens:itens.map(x => ({
       produto_id:x.p.produto_id,
       quantidade:x.q
@@ -1314,6 +1355,7 @@ async function enviarPedido(e) {
   }
 }
 
+validarContextoMesa();
 carregarProdutos();
 setInterval(carregarProdutos,30000);
 
